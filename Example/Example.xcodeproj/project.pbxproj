@@ -11,6 +11,7 @@
 		09A2CB94290A67E100D863AC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A2CB93290A67E100D863AC /* ContentView.swift */; };
 		09A2CB96290A67E200D863AC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09A2CB95290A67E200D863AC /* Assets.xcassets */; };
 		09A2CB99290A67E200D863AC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09A2CB98290A67E200D863AC /* Preview Assets.xcassets */; };
+		09A2CBA0290A8B8100D863AC /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A2CB9F290A8B8100D863AC /* App.swift */; };
 		68E672EFDEFC853975203396 /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8216EBBE7103E2FF16CABC1B /* Pods_Example.framework */; };
 /* End PBXBuildFile section */
 
@@ -21,6 +22,7 @@
 		09A2CB93290A67E100D863AC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		09A2CB95290A67E200D863AC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		09A2CB98290A67E200D863AC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		09A2CB9F290A8B8100D863AC /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		8216EBBE7103E2FF16CABC1B /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B757656AB7BAEFED2556D825 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,8 +60,9 @@
 		09A2CB90290A67E100D863AC /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				09A2CB91290A67E100D863AC /* ExampleApp.swift */,
+				09A2CB9F290A8B8100D863AC /* App.swift */,
 				09A2CB93290A67E100D863AC /* ContentView.swift */,
+				09A2CB91290A67E100D863AC /* ExampleApp.swift */,
 				09A2CB95290A67E200D863AC /* Assets.xcassets */,
 				09A2CB97290A67E200D863AC /* Preview Content */,
 			);
@@ -88,7 +91,6 @@
 				04653F3593EACA921FFE460D /* Pods-Example.debug.xcconfig */,
 				B757656AB7BAEFED2556D825 /* Pods-Example.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -206,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09A2CBA0290A8B8100D863AC /* App.swift in Sources */,
 				09A2CB94290A67E100D863AC /* ContentView.swift in Sources */,
 				09A2CB92290A67E100D863AC /* ExampleApp.swift in Sources */,
 			);
