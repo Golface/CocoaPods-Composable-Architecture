@@ -1,4 +1,5 @@
 PODS:
+  - CasePaths (0.10.1)
   - CombineSchedulers (0.8.0):
     - XCTestDynamicOverlay (~> 0.4)
   - CustomDump (0.6.0):
@@ -9,6 +10,7 @@ PODS:
   - XCTestDynamicOverlay (0.5.0)
 
 DEPENDENCIES:
+  - CasePaths (from `../`)
   - CombineSchedulers (from `../`)
   - CustomDump (from `../`)
   - IdentifiedCollections (from `../`)
@@ -16,6 +18,8 @@ DEPENDENCIES:
   - XCTestDynamicOverlay (from `../`)
 
 EXTERNAL SOURCES:
+  CasePaths:
+    :path: "../"
   CombineSchedulers:
     :path: "../"
   CustomDump:
@@ -28,12 +32,13 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  CasePaths: 49b0e0153ad7c148bbcf99e2532f2b4eb60c920c
   CombineSchedulers: deadd407211c185808bb1de5263cd8c2a49a8554
   CustomDump: 08f4847beabdddd0db9988bbd65a4107f1b4397c
   IdentifiedCollections: d551fb141e84a5da7422688894b37d66f94d69c8
   OrderedCollections: badb2b722e12245257de84c0b6518cc0c5dca6d3
   XCTestDynamicOverlay: 5c49ce3e11addb1d97ca980c270c524b171ecce7
 
-PODFILE CHECKSUM: ffd9c1ebdc434234dbe929ae98f7e872d80d11bd
+PODFILE CHECKSUM: 0a67fa457e3ec57bf7b1e307d35d86793497df13
 
 COCOAPODS: 1.11.3
