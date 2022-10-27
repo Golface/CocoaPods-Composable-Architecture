@@ -1,3 +1,16 @@
-PODFILE CHECKSUM: a036194c4bf245e6bbf6c83c00026f0a8c36eee0
+PODS:
+  - OrderedCollections (1.0.3)
+
+DEPENDENCIES:
+  - OrderedCollections (from `../`)
+
+EXTERNAL SOURCES:
+  OrderedCollections:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  OrderedCollections: badb2b722e12245257de84c0b6518cc0c5dca6d3
+
+PODFILE CHECKSUM: 634740ef82eafe6cd79c00ed449883ccaab73180
 
 COCOAPODS: 1.11.3
