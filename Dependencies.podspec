@@ -22,4 +22,5 @@ Pod::Spec.new do |spec|
   
   spec.dependency "CombineSchedulers", "~> 0.8"
   spec.dependency "XCTestDynamicOverlay", "~> 0.4"
+  spec.dependency "Clocks", "~> 0.1"
 end
