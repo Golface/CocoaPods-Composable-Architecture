@@ -1,15 +1,20 @@
 PODS:
+  - CombineSchedulers (0.8.0):
+    - XCTestDynamicOverlay (~> 0.4)
   - IdentifiedCollections (0.4.1):
     - OrderedCollections (~> 1.0.3)
   - OrderedCollections (1.0.3)
   - XCTestDynamicOverlay (0.5.0)
 
 DEPENDENCIES:
+  - CombineSchedulers (from `../`)
   - IdentifiedCollections (from `../`)
   - OrderedCollections (from `../`)
   - XCTestDynamicOverlay (from `../`)
 
 EXTERNAL SOURCES:
+  CombineSchedulers:
+    :path: "../"
   IdentifiedCollections:
     :path: "../"
   OrderedCollections:
@@ -18,10 +23,11 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  CombineSchedulers: deadd407211c185808bb1de5263cd8c2a49a8554
   IdentifiedCollections: d551fb141e84a5da7422688894b37d66f94d69c8
   OrderedCollections: badb2b722e12245257de84c0b6518cc0c5dca6d3
   XCTestDynamicOverlay: 5c49ce3e11addb1d97ca980c270c524b171ecce7
 
-PODFILE CHECKSUM: 74ab435db32e40d7e0fbee4ce25a4a23a1744df1
+PODFILE CHECKSUM: 8e9b1cf1077b2705f965ecff783780965cfb727a
 
 COCOAPODS: 1.11.3
