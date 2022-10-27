@@ -9,5 +9,6 @@ target 'Example' do
   pod "IdentifiedCollections", :path => '../'
   pod "XCTestDynamicOverlay", :path => '../'
   pod "CombineSchedulers", :path => '../'
+  pod "CustomDump", :path => '../'
 
 end
