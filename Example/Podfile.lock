@@ -1,16 +1,22 @@
 PODS:
+  - IdentifiedCollections (0.4.1):
+    - OrderedCollections (~> 1.0.3)
   - OrderedCollections (1.0.3)
 
 DEPENDENCIES:
+  - IdentifiedCollections (from `../`)
   - OrderedCollections (from `../`)
 
 EXTERNAL SOURCES:
+  IdentifiedCollections:
+    :path: "../"
   OrderedCollections:
     :path: "../"
 
 SPEC CHECKSUMS:
+  IdentifiedCollections: d551fb141e84a5da7422688894b37d66f94d69c8
   OrderedCollections: badb2b722e12245257de84c0b6518cc0c5dca6d3
 
-PODFILE CHECKSUM: 634740ef82eafe6cd79c00ed449883ccaab73180
+PODFILE CHECKSUM: b48967d2e23845ff849b6baad88158448473748a
 
 COCOAPODS: 1.11.3

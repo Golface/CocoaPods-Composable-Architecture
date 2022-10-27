@@ -6,5 +6,6 @@ target 'Example' do
   use_frameworks!
 
   pod "OrderedCollections", :path => '../'
+  pod "IdentifiedCollections", :path => '../'
 
 end
