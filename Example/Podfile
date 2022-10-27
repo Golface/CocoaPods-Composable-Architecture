@@ -5,11 +5,16 @@ target 'Example' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
+  pod "Collections", :path => '../'
   pod "OrderedCollections", :path => '../'
+  pod "DequeModule", :path => '../'
   pod "IdentifiedCollections", :path => '../'
   pod "XCTestDynamicOverlay", :path => '../'
   pod "CombineSchedulers", :path => '../'
   pod "CustomDump", :path => '../'
   pod "CasePaths", :path => '../'
-
+  pod "Clocks", :path => '../'
+  pod "AsyncAlgorithms", :path => '../'
+  pod "Dependencies", :path => '../'
+  pod "ComposableArchitecture", :path => '../'
 end

@@ -1,28 +1,67 @@
 PODS:
+  - AsyncAlgorithms (0.0.3):
+    - Collections (~> 1.0.3)
   - CasePaths (0.10.1)
+  - Clocks (0.1.4):
+    - AsyncAlgorithms (~> 0.0.3)
+    - XCTestDynamicOverlay (~> 0.4)
+  - Collections (1.0.3):
+    - DequeModule
+    - OrderedCollections
   - CombineSchedulers (0.8.0):
     - XCTestDynamicOverlay (~> 0.4)
+  - ComposableArchitecture (0.44.1):
+    - CasePaths (~> 0.10)
+    - Clocks (~> 0.1)
+    - CombineSchedulers (~> 0.8)
+    - CustomDump (~> 0.6)
+    - Dependencies
+    - IdentifiedCollections (~> 0.4)
+    - XCTestDynamicOverlay (~> 0.5)
   - CustomDump (0.6.0):
     - XCTestDynamicOverlay (~> 0.4)
+  - Dependencies (0.44.1):
+    - Clocks (~> 0.1)
+    - CombineSchedulers (~> 0.8)
+    - XCTestDynamicOverlay (~> 0.4)
+  - DequeModule (1.0.3)
   - IdentifiedCollections (0.4.1):
     - OrderedCollections (~> 1.0.3)
   - OrderedCollections (1.0.3)
   - XCTestDynamicOverlay (0.5.0)
 
 DEPENDENCIES:
+  - AsyncAlgorithms (from `../`)
   - CasePaths (from `../`)
+  - Clocks (from `../`)
+  - Collections (from `../`)
   - CombineSchedulers (from `../`)
+  - ComposableArchitecture (from `../`)
   - CustomDump (from `../`)
+  - Dependencies (from `../`)
+  - DequeModule (from `../`)
   - IdentifiedCollections (from `../`)
   - OrderedCollections (from `../`)
   - XCTestDynamicOverlay (from `../`)
 
 EXTERNAL SOURCES:
+  AsyncAlgorithms:
+    :path: "../"
   CasePaths:
+    :path: "../"
+  Clocks:
+    :path: "../"
+  Collections:
     :path: "../"
   CombineSchedulers:
     :path: "../"
+  ComposableArchitecture:
+    :path: "../"
   CustomDump:
+    :path: "../"
+  Dependencies:
+    :path: "../"
+  DequeModule:
     :path: "../"
   IdentifiedCollections:
     :path: "../"
@@ -32,13 +71,19 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
+  AsyncAlgorithms: 72b50ac2b5432d9ca3514abfe2fbf16a9de61308
   CasePaths: 49b0e0153ad7c148bbcf99e2532f2b4eb60c920c
+  Clocks: c5cd2872c897f49aae6c3c31393f16129ef1c6a3
+  Collections: 872f8643e3642cf01e0e96f962ed6cb9735cdd12
   CombineSchedulers: deadd407211c185808bb1de5263cd8c2a49a8554
+  ComposableArchitecture: 6286d8f7aa658eb537f142035ad108f0b063c589
   CustomDump: 08f4847beabdddd0db9988bbd65a4107f1b4397c
+  Dependencies: 5ab7a4de9498d68438d0c451272daa3f79e82ab5
+  DequeModule: f12ad627184cc27e4c9b86ce440c19476f34e696
   IdentifiedCollections: d551fb141e84a5da7422688894b37d66f94d69c8
   OrderedCollections: badb2b722e12245257de84c0b6518cc0c5dca6d3
   XCTestDynamicOverlay: 5c49ce3e11addb1d97ca980c270c524b171ecce7
 
-PODFILE CHECKSUM: 0a67fa457e3ec57bf7b1e307d35d86793497df13
+PODFILE CHECKSUM: 17fe27d6ced30d41330889c8da0039a2317abb92
 
 COCOAPODS: 1.11.3
