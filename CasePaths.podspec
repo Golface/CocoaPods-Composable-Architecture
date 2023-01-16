@@ -10,12 +10,14 @@ Pod::Spec.new do |spec|
   spec.license = { :type => "MIT", :file => "swift-case-paths/LICENSE" }
   spec.author = { "Point-Free" => "support@pointfree.co" }
   
-  spec.ios.deployment_target = "11.0"
+  spec.ios.deployment_target = "13.0"
   spec.osx.deployment_target = "10.15"
   spec.watchos.deployment_target = "6.0"
-  spec.tvos.deployment_target = "11.0"
+  spec.tvos.deployment_target = "13.0"
   spec.swift_version = '5.5'
 
   spec.source = { :git => "https://github.com/pointfreeco/swift-case-paths.git", :tag => "#{spec.version}" }
   spec.source_files  = "swift-case-paths/Sources/CasePaths/**/*.swift"
+  
+  spec.dependency "XCTestDynamicOverlay", "~> 0.4"
 end

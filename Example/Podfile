@@ -17,4 +17,5 @@ target 'Example' do
   pod "AsyncAlgorithms", :path => '../'
   pod "Dependencies", :path => '../'
   pod "ComposableArchitecture", :path => '../'
+  pod "_SwiftUINavigationState", :path => '../'
 end
