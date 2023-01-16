@@ -60,13 +60,13 @@ If you are disciplined about injecting dependencies, you probably have a lot of 
 
 ```swift
 class LoginViewModel: ObservableObject {
-  ...
+  // ...
 
   init(analytics: AnalyticsClient) {
-    ...
+    // ...
   }
 
-  ...
+  // ...
 }
 ```
 
@@ -79,7 +79,7 @@ func testLogin() {
     analytics: .test { events.append($0) }
   )
 
-  ...
+  // ...
 
   XCTAssertEqual(events, [.init(name: "Login Success")])
 }
@@ -109,7 +109,7 @@ func testValidation() {
     analytics: .unimplemented
   )
 
-  ...
+  // ...
 }
 ```
 
@@ -136,12 +136,12 @@ extension AnalyticsClient {
 }
 ```
 
-XCTest Dynamic Overlay also comes with a helper that simplifies this exact pattern: `XCTUnimplemented`. It creates failing closures for you:
+XCTest Dynamic Overlay also comes with a helper that simplifies this exact pattern: `unimplemented`. It creates failing closures for you:
 
 ```swift
 extension AnalyticsClient {
   static let unimplemented = Self(
-    track: XCTUnimplemented("\(Self.self).track")
+    track: unimplemented("\(Self.self).track")
   )
 }
 ```
@@ -157,15 +157,21 @@ struct AppDependencies {
 
 extension AppDependencies {
   static let unimplemented = Self(
-    date: XCTUnimplemented("\(Self.self).date", placeholder: Date()),
-    fetchUser: XCTUnimplemented("\(Self.self).fetchUser"),
-    uuid: XCTUnimplemented("\(Self.self).uuid", placeholder: UUID())
+    date: unimplemented("\(Self.self).date", placeholder: Date()),
+    fetchUser: unimplemented("\(Self.self).fetchUser"),
+    uuid: unimplemented("\(Self.self).uuid", placeholder: UUID())
   )
 }
 ```
 
 The above `placeholder` parameters can be left off, but will fatal error when the endpoint is called.
 
+## Documentation 
+
+Full documentation can be found [here][docs].
+
 ## License
 
 This library is released under the MIT license. See [LICENSE](LICENSE) for details.
+
+[docs]: https://pointfreeco.github.io/xctest-dynamic-overlay/main/documentation/xctestdynamicoverlay

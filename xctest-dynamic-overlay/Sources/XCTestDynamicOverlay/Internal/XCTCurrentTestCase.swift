@@ -2,11 +2,10 @@
   #if canImport(ObjectiveC)
     import Foundation
 
-    var XCTCurrentTestCase: AnyObject? {
+    @_spi(CurrentTestCase) public var XCTCurrentTestCase: AnyObject? {
       guard
-        let XCTestObservationCenter = NSClassFromString("XCTestObservationCenter")
-          as Any as? NSObjectProtocol,
-        String(describing: XCTestObservationCenter) != "<null>",
+        let XCTestObservationCenter = NSClassFromString("XCTestObservationCenter"),
+        let XCTestObservationCenter = XCTestObservationCenter as Any as? NSObjectProtocol,
         let shared = XCTestObservationCenter.perform(Selector(("sharedTestObservationCenter")))?
           .takeUnretainedValue(),
         let observers = shared.perform(Selector(("observers")))?
@@ -20,12 +19,12 @@
       return currentTestCase
     }
   #else
-    var XCTCurrentTestCase: AnyObject? {
+    @_spi(CurrentTestCase) public var XCTCurrentTestCase: AnyObject? {
       nil
     }
   #endif
 #else
-  var XCTCurrentTestCase: AnyObject? {
+  @_spi(CurrentTestCase) public var XCTCurrentTestCase: AnyObject? {
     nil
   }
 #endif
