@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "Clocks"
-  spec.version = "0.1.4"
+  spec.version = "0.2.0"
   spec.summary = "⏰ A few clocks that make working with Swift concurrency more testable and more versatile."
   spec.description = <<-DESC
   ⏰ A few clocks that make working with Swift concurrency more testable and more versatile.
