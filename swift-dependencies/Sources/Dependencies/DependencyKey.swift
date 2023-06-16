@@ -120,10 +120,13 @@ public protocol DependencyKey: TestDependencyKey {
 /// See ``DependencyKey`` to define a static, default value for the live application.
 public protocol TestDependencyKey {
   /// The associated type representing the type of the dependency key's value.
-  associatedtype Value = Self
-
-  // NB: This associated type should be constrained to `Sendable` when this bug is fixed:
-  //     https://github.com/apple/swift/issues/60649
+  #if swift(>=5.7.1)
+    associatedtype Value: Sendable = Self
+  #else
+    // NB: Can't constrain to `Sendable` on earlier Swift versions due to this bug:
+    //     https://github.com/apple/swift/issues/60649
+    associatedtype Value = Self
+  #endif
 
   /// The preview value for the dependency key.
   ///
@@ -160,11 +163,13 @@ extension DependencyKey {
   /// A default implementation that provides the ``liveValue`` to Xcode previews.
   ///
   /// You may provide your own default `previewValue` in your conformance to ``TestDependencyKey``,
-  /// which will take precedence over this implementation.
+  /// which will take precedence over this implementation. If you are going to provide your own
+  /// `previewValue` implementation, be sure to do it in the same module as the
+  /// ``TestDependencyKey``.
   public static var previewValue: Value { Self.liveValue }
 
-  /// A default implementation that provides the ``liveValue`` to XCTest runs, but will trigger test
-  /// failure to occur if accessed.
+  /// A default implementation that provides the ``previewValue`` to XCTest runs (or ``liveValue``,
+  /// if no preview value is implemented), but will trigger a test failure when accessed.
   ///
   /// To prevent test failures, explicitly override the dependency in any tests in which it is
   /// accessed:
@@ -182,53 +187,58 @@ extension DependencyKey {
   /// You may provide your own default `testValue` in your conformance to ``TestDependencyKey``,
   /// which will take precedence over this implementation.
   public static var testValue: Value {
-    guard !DependencyValues.isSetting
-    else { return Self.liveValue }
+    #if DEBUG
+      guard !DependencyValues.isSetting
+      else { return Self.previewValue }
 
-    var dependencyDescription = ""
-    if let fileID = DependencyValues.currentDependency.fileID,
-      let line = DependencyValues.currentDependency.line
-    {
+      var dependencyDescription = ""
+      if let fileID = DependencyValues.currentDependency.fileID,
+        let line = DependencyValues.currentDependency.line
+      {
+        dependencyDescription.append(
+          """
+            Location:
+              \(fileID):\(line)
+
+          """
+        )
+      }
       dependencyDescription.append(
+        Self.self == Value.self
+          ? """
+            Dependency:
+              \(typeName(Value.self))
+          """
+          : """
+            Key:
+              \(typeName(Self.self))
+            Value:
+              \(typeName(Value.self))
+          """
+      )
+      let dependencyName =
+        DependencyValues.currentDependency.name
+        .map { "@Dependency(\\.\($0))" }
+        ?? "A dependency"
+      XCTFail(
         """
-          Location:
-            \(fileID):\(line)
+        \(dependencyName) has no test implementation, but was accessed from a test context:
 
+        \(dependencyDescription)
+
+        Dependencies registered with the library are not allowed to use their default, live \
+        implementations when run from tests.
+
+        To fix, override \
+        \(DependencyValues.currentDependency.name.map { "'\($0)'" } ?? "the dependency") with a \
+        test value. If you are using the Composable Architecture, mutate the 'dependencies' \
+        property on your 'TestStore'. Otherwise, use 'withDependencies' to define a scope for the \
+        override. If you'd like to provide a default value for all tests, implement the \
+        'testValue' requirement of the 'DependencyKey' protocol.
         """
       )
-    }
-    dependencyDescription.append(
-      Self.self == Value.self
-        ? """
-          Dependency:
-            \(typeName(Value.self))
-        """
-        : """
-          Key:
-            \(typeName(Self.self))
-          Value:
-            \(typeName(Value.self))
-        """
-    )
-    XCTFail(
-      """
-      \(DependencyValues.currentDependency.name.map { "@Dependency(\\.\($0))" } ?? "A dependency") \
-      has no test implementation, but was accessed from a test context:
-
-      \(dependencyDescription)
-
-      Dependencies registered with the library are not allowed to use their default, live \
-      implementations when run from tests.
-
-      To fix, override \
-      \(DependencyValues.currentDependency.name.map { "'\($0)'" } ?? "the dependency") with a test \
-      value. If you are using the Composable Architecture, mutate the 'dependencies' property on \
-      your 'TestStore'. Otherwise, use 'withDependencies' to define a scope for the override. \
-      If you'd like to provide a default value for all tests, implement the 'testValue' \
-      requirement of the 'DependencyKey' protocol.
-      """
-    )
-    return Self.liveValue
+    #endif
+    return Self.previewValue
   }
 }
 

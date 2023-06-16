@@ -81,7 +81,9 @@ import Foundation
 /// Read the article <doc:RegisteringDependencies> for more information.
 public struct DependencyValues: Sendable {
   @TaskLocal public static var _current = Self()
-  @TaskLocal static var isSetting = false
+  #if DEBUG
+    @TaskLocal static var isSetting = false
+  #endif
   @TaskLocal static var currentDependency = CurrentDependency()
 
   fileprivate var cachedValues = CachedValues()
@@ -93,7 +95,7 @@ public struct DependencyValues: Sendable {
   /// provide access only to default values. Instead, you rely on the dependency values' instance
   /// that the library manages for you when you use the ``Dependency`` property wrapper.
   public init() {
-    #if DEBUG
+    #if canImport(XCTest)
       _ = setUpTestObservers
     #endif
   }
@@ -126,7 +128,8 @@ public struct DependencyValues: Sendable {
     line: UInt = #line
   ) -> Key.Value where Key.Value: Sendable {
     get {
-      guard let dependency = self.storage[ObjectIdentifier(key)]?.base as? Key.Value
+      guard let base = self.storage[ObjectIdentifier(key)]?.base,
+        let dependency = base as? Key.Value
       else {
         let context =
           self.storage[ObjectIdentifier(DependencyContextKey.self)]?.base as? DependencyContext
@@ -220,12 +223,37 @@ struct CurrentDependency {
 }
 
 private let defaultContext: DependencyContext = {
-  if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-    return .preview
-  } else if _XCTIsTesting {
-    return .test
-  } else {
+  let environment = ProcessInfo.processInfo.environment
+  var inferredContext: DependencyContext {
+    if environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+      return .preview
+    } else if _XCTIsTesting {
+      return .test
+    } else {
+      return .live
+    }
+  }
+
+  guard let value = environment["SWIFT_DEPENDENCIES_CONTEXT"]
+  else { return inferredContext }
+
+  switch value {
+  case "live":
     return .live
+  case "preview":
+    return .preview
+  case "test":
+    return .test
+  default:
+    runtimeWarn(
+      """
+      An environment value for SWIFT_DEPENDENCIES_CONTEXT was provided but did not match "live",
+      "preview", or "test".
+
+          SWIFT_DEPENDENCIES_CONTEXT = \(value.debugDescription)
+      """
+    )
+    return inferredContext
   }
 }()
 
@@ -249,7 +277,7 @@ private final class CachedValues: @unchecked Sendable {
     defer { self.lock.unlock() }
 
     let cacheKey = CacheKey(id: ObjectIdentifier(key), context: context)
-    guard let value = self.cached[cacheKey]?.base as? Key.Value
+    guard let base = self.cached[cacheKey]?.base, let value = base as? Key.Value
     else {
       let value: Key.Value?
       switch context {
@@ -263,51 +291,53 @@ private final class CachedValues: @unchecked Sendable {
 
       guard let value = value
       else {
-        if !DependencyValues.isSetting {
-          var dependencyDescription = ""
-          if let fileID = DependencyValues.currentDependency.fileID,
-            let line = DependencyValues.currentDependency.line
-          {
-            dependencyDescription.append(
-              """
-                Location:
-                  \(fileID):\(line)
+        #if DEBUG
+          if !DependencyValues.isSetting {
+            var dependencyDescription = ""
+            if let fileID = DependencyValues.currentDependency.fileID,
+              let line = DependencyValues.currentDependency.line
+            {
+              dependencyDescription.append(
+                """
+                  Location:
+                    \(fileID):\(line)
 
+                """
+              )
+            }
+            dependencyDescription.append(
+              Key.self == Key.Value.self
+                ? """
+                  Dependency:
+                    \(typeName(Key.Value.self))
+                """
+                : """
+                  Key:
+                    \(typeName(Key.self))
+                  Value:
+                    \(typeName(Key.Value.self))
+                """
+            )
+
+            runtimeWarn(
               """
+              "@Dependency(\\.\(function))" has no live implementation, but was accessed from a \
+              live context.
+
+              \(dependencyDescription)
+
+              Every dependency registered with the library must conform to "DependencyKey", and \
+              that conformance must be visible to the running application.
+
+              To fix, make sure that "\(typeName(Key.self))" conforms to "DependencyKey" by \
+              providing a live implementation of your dependency, and make sure that the \
+              conformance is linked with this current application.
+              """,
+              file: DependencyValues.currentDependency.file ?? file,
+              line: DependencyValues.currentDependency.line ?? line
             )
           }
-          dependencyDescription.append(
-            Key.self == Key.Value.self
-              ? """
-                Dependency:
-                  \(typeName(Key.Value.self))
-              """
-              : """
-                Key:
-                  \(typeName(Key.self))
-                Value:
-                  \(typeName(Key.Value.self))
-              """
-          )
-
-          runtimeWarn(
-            """
-            "@Dependency(\\.\(function))" has no live implementation, but was accessed from a \
-            live context.
-
-            \(dependencyDescription)
-
-            Every dependency registered with the library must conform to "DependencyKey", and \
-            that conformance must be visible to the running application.
-
-            To fix, make sure that "\(typeName(Key.self))" conforms to "DependencyKey" by \
-            providing a live implementation of your dependency, and make sure that the \
-            conformance is linked with this current application.
-            """,
-            file: DependencyValues.currentDependency.file ?? file,
-            line: DependencyValues.currentDependency.line ?? line
-          )
-        }
+        #endif
         return Key.testValue
       }
 
@@ -320,61 +350,61 @@ private final class CachedValues: @unchecked Sendable {
 }
 
 // NB: We cannot statically link/load XCTest on Apple platforms, so we dynamically load things
-//     instead and we limit this to debug builds to avoid App Store binary rejection.
-#if DEBUG
-  #if !canImport(ObjectiveC)
-    import XCTest
-  #endif
-
+//     instead on platforms where XCTest is available.
+#if canImport(XCTest)
   private let setUpTestObservers: Void = {
-    #if canImport(ObjectiveC)
-      DispatchQueue.mainSync {
-        guard
-          let XCTestObservation = objc_getProtocol("XCTestObservation"),
-          let XCTestObservationCenter = NSClassFromString("XCTestObservationCenter"),
-          let XCTestObservationCenter = XCTestObservationCenter as Any as? NSObjectProtocol,
-          let XCTestObservationCenterShared =
-            XCTestObservationCenter
-            .perform(Selector(("sharedTestObservationCenter")))?
-            .takeUnretainedValue()
-        else { return }
-        let testCaseWillStartBlock: @convention(block) (AnyObject) -> Void = { _ in
-          DependencyValues._current.cachedValues.cached = [:]
+    if _XCTIsTesting {
+      #if canImport(ObjectiveC)
+        DispatchQueue.mainSync {
+          guard
+            let XCTestObservation = objc_getProtocol("XCTestObservation"),
+            let XCTestObservationCenter = NSClassFromString("XCTestObservationCenter"),
+            let XCTestObservationCenter = XCTestObservationCenter as Any as? NSObjectProtocol,
+            let XCTestObservationCenterShared =
+              XCTestObservationCenter
+              .perform(Selector(("sharedTestObservationCenter")))?
+              .takeUnretainedValue()
+          else { return }
+          let testCaseWillStartBlock: @convention(block) (AnyObject) -> Void = { _ in
+            DependencyValues._current.cachedValues.cached = [:]
+          }
+          let testCaseWillStartImp = imp_implementationWithBlock(testCaseWillStartBlock)
+          class_addMethod(
+            TestObserver.self, Selector(("testCaseWillStart:")), testCaseWillStartImp, nil)
+          class_addProtocol(TestObserver.self, XCTestObservation)
+          _ =
+            XCTestObservationCenterShared
+            .perform(Selector(("addTestObserver:")), with: TestObserver())
         }
-        let testCaseWillStartImp = imp_implementationWithBlock(testCaseWillStartBlock)
-        class_addMethod(
-          TestObserver.self, Selector(("testCaseWillStart:")), testCaseWillStartImp, nil)
-        class_addProtocol(TestObserver.self, XCTestObservation)
-        _ =
-          XCTestObservationCenterShared
-          .perform(Selector(("addTestObserver:")), with: TestObserver())
-      }
-    #else
-      XCTestObservationCenter.shared.addTestObserver(TestObserver())
-    #endif
+      #else
+        XCTestObservationCenter.shared.addTestObserver(TestObserver())
+      #endif
+    }
   }()
 
   #if canImport(ObjectiveC)
     private final class TestObserver: NSObject {}
+
+    extension DispatchQueue {
+      private static let key = DispatchSpecificKey<UInt8>()
+      private static let value: UInt8 = 0
+
+      fileprivate static func mainSync<R>(execute block: @Sendable () -> R) -> R {
+        Self.main.setSpecific(key: Self.key, value: Self.value)
+        if getSpecific(key: Self.key) == Self.value {
+          return block()
+        } else {
+          return Self.main.sync(execute: block)
+        }
+      }
+    }
   #else
+    import XCTest
+
     private final class TestObserver: NSObject, XCTestObservation {
       func testCaseWillStart(_ testCase: XCTestCase) {
         DependencyValues._current.cachedValues.cached = [:]
       }
     }
   #endif
-
-  extension DispatchQueue {
-    private static let key = DispatchSpecificKey<UInt8>()
-    private static let value: UInt8 = 0
-
-    fileprivate static func mainSync<R>(execute block: @Sendable () -> R) -> R {
-      Self.main.setSpecific(key: Self.key, value: Self.value)
-      if getSpecific(key: Self.key) == Self.value {
-        return block()
-      } else {
-        return Self.main.sync(execute: block)
-      }
-    }
-  }
 #endif

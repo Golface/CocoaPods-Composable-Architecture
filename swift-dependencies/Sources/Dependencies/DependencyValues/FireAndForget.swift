@@ -34,8 +34,8 @@ extension DependencyValues {
   ///
   /// ```swift
   /// try await self.database.updateUser(id: userID, email: newEmailAddress)
-  /// self.fireAndForget {
-  ///   self.sendEmail(
+  /// await self.fireAndForget {
+  ///   try await self.sendEmail(
   ///     email: newEmailAddress,
   ///     subject: "You email has been updated"
   ///   )
@@ -69,7 +69,7 @@ private enum FireAndForgetKey: DependencyKey {
   public static let liveValue = FireAndForget { priority, operation in
     Task(priority: priority) { try await operation() }
   }
-  public static let testValue = FireAndForget { _, operation in
-    try? await operation()
+  public static let testValue = FireAndForget { priority, operation in
+    await Task(priority: priority) { try? await operation() }.value
   }
 }

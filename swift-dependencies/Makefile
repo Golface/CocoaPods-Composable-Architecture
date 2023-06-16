@@ -1,10 +1,9 @@
-PLATFORM_IOS = iOS Simulator,name=iPhone 11 Pro Max
+CONFIG = debug
+PLATFORM_IOS = iOS Simulator,id=$(call udid_for,iPhone)
 PLATFORM_MACOS = macOS
 PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
-PLATFORM_TVOS = tvOS Simulator,name=Apple TV
-PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
-
-CONFIG = debug
+PLATFORM_TVOS = tvOS Simulator,id=$(call udid_for,TV)
+PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,Watch)
 
 default: test
 
@@ -35,12 +34,33 @@ test-linux:
 		swift:5.7-focal \
 		bash -c 'apt-get update && apt-get -y install make && make test-swift'
 
+build-for-static-stdlib:
+	@swift build -c debug --static-swift-stdlib
+	@swift build -c release --static-swift-stdlib
+
+test-integration:
+	xcodebuild test \
+		-scheme "Integration" \
+		-destination platform="$(PLATFORM_IOS)" || exit 1; \
+
 build-for-library-evolution:
 	swift build \
 		-c release \
 		--target Dependencies \
 		-Xswiftc -emit-module-interface \
 		-Xswiftc -enable-library-evolution
+
+build-for-static-stdlib-docker:
+	@docker run \
+		-v "$(PWD):$(PWD)" \
+		-w "$(PWD)" \
+		swift:5.8-focal \
+		bash -c "swift build -c debug --static-swift-stdlib"
+	@docker run \
+		-v "$(PWD):$(PWD)" \
+		-w "$(PWD)" \
+		swift:5.8-focal \
+		bash -c "swift build -c release --static-swift-stdlib"
 
 format:
 	swift format \
@@ -50,3 +70,7 @@ format:
 		./Package.swift ./Sources ./Tests
 
 .PHONY: test test-swift test-linux build-for-library-evolution format
+
+define udid_for
+$(shell xcrun simctl list --json devices available $(1) | jq -r '.devices | to_entries | map(select(.value | add)) | sort_by(.key) | last.value | last.udid')
+endef

@@ -2,6 +2,12 @@
 
 A dependency management library inspired by SwiftUI's "environment."
 
+## Additional Resources
+
+- [GitHub Repo](https://github.com/pointfreeco/swift-dependencies)
+- [Discussions](https://github.com/pointfreeco/swift-dependencies/discussions)
+- [Point-Free Videos](http://pointfree.co)
+
 ## Overview
 
 Dependencies are the types and functions in your application that need to interact with outside
@@ -58,6 +64,7 @@ This library addresses all of the points above, and much, _much_ more.
 - <doc:UsingDependencies>
 - <doc:RegisteringDependencies>
 - <doc:LivePreviewTest>
+- <doc:Testing>
 
 ### Advanced
 
