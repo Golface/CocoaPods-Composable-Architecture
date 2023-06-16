@@ -23,7 +23,7 @@ class StandupDetailModel: ObservableObject {
 
   enum Destination {
     case alert(AlertState<AlertAction>)
-    case edit(EditStandupModel)
+    case edit(StandupFormModel)
     case meeting(Meeting)
     case record(RecordMeetingModel)
   }
@@ -46,7 +46,7 @@ class StandupDetailModel: ObservableObject {
     self.standup.meetings.remove(atOffsets: indices)
   }
 
-  func meetingTapping(_ meeting: Meeting) {
+  func meetingTapped(_ meeting: Meeting) {
     self.destination = .meeting(meeting)
   }
 
@@ -54,28 +54,31 @@ class StandupDetailModel: ObservableObject {
     self.destination = .alert(.deleteStandup)
   }
 
-  func alertButtonTapped(_ action: AlertAction) async {
+  func alertButtonTapped(_ action: AlertAction?) async {
     switch action {
-    case .confirmDeletion:
+    case .confirmDeletion?:
       self.onConfirmDeletion()
       self.isDismissed = true
 
-    case .continueWithoutRecording:
+    case .continueWithoutRecording?:
       self.destination = .record(
         withDependencies(from: self) {
           RecordMeetingModel(standup: self.standup)
         }
       )
 
-    case .openSettings:
+    case .openSettings?:
       await self.openSettings()
+
+    case nil:
+      break
     }
   }
 
   func editButtonTapped() {
     self.destination = .edit(
       withDependencies(from: self) {
-        EditStandupModel(standup: self.standup)
+        StandupFormModel(standup: self.standup)
       }
     )
   }
@@ -175,7 +178,7 @@ struct StandupDetailView: View {
         Section {
           ForEach(self.model.standup.meetings) { meeting in
             Button {
-              self.model.meetingTapping(meeting)
+              self.model.meetingTapped(meeting)
             } label: {
               HStack {
                 Image(systemName: "calendar")
@@ -237,7 +240,7 @@ struct StandupDetailView: View {
       case: /StandupDetailModel.Destination.edit
     ) { $editModel in
       NavigationStack {
-        EditStandupView(model: editModel)
+        StandupFormView(model: editModel)
           .navigationTitle(self.model.standup.title)
           .toolbar {
             ToolbarItem(placement: .cancellationAction) {

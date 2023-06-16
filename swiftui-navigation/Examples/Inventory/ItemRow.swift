@@ -39,10 +39,12 @@ class ItemRowModel: Identifiable, ObservableObject {
     )
   }
 
-  func alertButtonTapped(_ action: AlertAction) {
+  func alertButtonTapped(_ action: AlertAction?) {
     switch action {
-    case .deleteConfirmation:
+    case .deleteConfirmation?:
       self.onDelete()
+    case nil:
+      break
     }
   }
 
@@ -113,9 +115,10 @@ struct ItemRowView: View {
       .foregroundColor(self.model.item.status.isInStock ? nil : Color.gray)
       .alert(
         unwrapping: self.$model.destination,
-        case: /ItemRowModel.Destination.alert,
-        action: self.model.alertButtonTapped
-      )
+        case: /ItemRowModel.Destination.alert
+      ) {
+        self.model.alertButtonTapped($0)
+      }
       .popover(
         unwrapping: self.$model.destination,
         case: /ItemRowModel.Destination.duplicate

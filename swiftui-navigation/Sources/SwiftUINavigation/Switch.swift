@@ -1,4 +1,5 @@
 import SwiftUI
+@_spi(RuntimeWarn) import _SwiftUINavigationState
 
 /// A view that can switch over a binding of enum state and exhaustively handle each case.
 ///
@@ -15,7 +16,7 @@ import SwiftUI
 ///   case outOfStock(isOnBackOrder: Bool)
 /// }
 ///
-/// struct InventoryItemView {
+/// struct InventoryItemView: View {
 ///   @State var status: ItemStatus
 ///
 ///   var body: some View {

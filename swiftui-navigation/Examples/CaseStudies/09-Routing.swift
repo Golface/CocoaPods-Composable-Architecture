@@ -5,7 +5,7 @@ private let readMe = """
   This case study demonstrates how to power multiple forms of navigation from a single destination \
   enum that describes all of the possible destinations one can travel to from this screen.
 
-  The screen has three navigation destinations: an alert, a navigation link to a count stepper, \
+  The screen has four navigation destinations: an alert, a confirmation dialog, a navigation link to a count stepper, \
   and a modal sheet to a count stepper. The state for each of these destinations is held as \
   associated data of an enum, and bindings to the cases of that enum are derived using the tools \
   in this library.
@@ -77,7 +77,7 @@ struct Routing: View {
         }
       } destination: { $count in
         Form {
-          Stepper("Number: \(count)", value: $count)
+          Stepper("Count: \(count)", value: $count)
         }
         .navigationTitle("Routing link")
       } label: {
@@ -91,10 +91,12 @@ struct Routing: View {
     .navigationTitle("Routing")
     .alert(unwrapping: self.$destination, case: /Destination.alert) { action in
       switch action {
-      case .randomize:
+      case .randomize?:
         self.count = .random(in: 0...1_000)
-      case .reset:
+      case .reset?:
         self.count = 0
+      case nil:
+        break
       }
     }
     .confirmationDialog(
@@ -102,16 +104,18 @@ struct Routing: View {
       case: /Destination.confirmationDialog
     ) { action in
       switch action {
-      case .decrement:
+      case .decrement?:
         self.count -= 1
-      case .increment:
+      case .increment?:
         self.count += 1
+      case nil:
+        break
       }
     }
     .sheet(unwrapping: self.$destination, case: /Destination.sheet) { $count in
       NavigationView {
         Form {
-          Stepper("Number: \(count)", value: $count)
+          Stepper("Count: \(count)", value: $count)
         }
         .navigationTitle("Routing sheet")
       }

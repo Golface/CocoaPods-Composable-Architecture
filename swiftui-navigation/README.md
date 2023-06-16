@@ -1,6 +1,7 @@
 # SwiftUI Navigation
 
 [![CI](https://github.com/pointfreeco/swiftui-navigation/actions/workflows/ci.yml/badge.svg)](https://github.com/pointfreeco/swiftui-navigation/actions/workflows/ci.yml)
+[![Slack](https://img.shields.io/badge/slack-chat-informational.svg?label=Slack&logo=slack)](http://pointfree.co/slack-invite)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpointfreeco%2Fswiftui-navigation%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/pointfreeco/swiftui-navigation)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpointfreeco%2Fswiftui-navigation%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/pointfreeco/swiftui-navigation)
 
@@ -9,6 +10,7 @@ Tools for making SwiftUI navigation simpler, more ergonomic and more precise.
   * [Overview](#overview)
   * [Examples](#examples)
   * [Learn more](#learn-more)
+  * [Community](#community)
   * [Installation](#installation)
   * [Documentation](#documentation)
   * [License](#license)
@@ -32,10 +34,7 @@ fall in two categories:
   piece of data, handing it to a SwiftUI view, and letting SwiftUI handle the rest.
 
 Navigation that is "state-driven" is the more powerful form of navigation, albeit slightly more 
-complicated, but unfortunately SwiftUI does not ship with all the tools necessary to model our 
-domains as concisely as possible and use these navigation APIs.
-
-Unfortunately, SwiftUI does not ship with all of the tools necessary to model our domains with 
+complicated. Unfortunately, SwiftUI does not ship with all of the tools necessary to model our domains with 
 enums and make use of navigation APIs. This library bridges that gap by providing APIs that allow
 you to model your navigation destinations as an enum, and then drive navigation by a binding
 to that enum.
@@ -85,6 +84,15 @@ You can watch all of the episodes [here](https://www.pointfree.co/collections/sw
   <img alt="video poster image" src="https://d3rccdn33rt8ze.cloudfront.net/episodes/0211.jpeg" width="600">
 </a>
 
+## Community
+
+If you want to discuss this library or have a question about how to use it to solve 
+a particular problem, there are a number of places you can discuss with fellow 
+[Point-Free](http://www.pointfree.co) enthusiasts:
+
+* For long-form discussions, we recommend the [discussions](http://github.com/pointfreeco/swiftui-navigation/discussions) tab of this repo.
+* For casual chat, we recommend the [Point-Free Community slack](http://pointfree.co/slack-invite).
+
 ## Installation
 
 You can add SwiftUI Navigation to an Xcode project by adding it as a package dependency.
@@ -96,7 +104,7 @@ it's as simple as adding it to a `dependencies` clause in your `Package.swift`:
 
 ``` swift
 dependencies: [
-  .package(url: "https://github.com/pointfreeco/swiftui-navigation", from: "0.4.5")
+  .package(url: "https://github.com/pointfreeco/swiftui-navigation", from: "0.7.1")
 ]
 ```
 
