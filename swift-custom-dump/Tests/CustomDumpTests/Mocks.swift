@@ -39,6 +39,12 @@ enum Enum {
   case baz(fizz: Double, buzz: String)
   case fizz(Double, buzz: String)
   case fu(bar: Int)
+  case buzz
+}
+
+enum Nested {
+  case nest(Enum)
+  case largerNest(Int, Enum)
 }
 
 enum Namespaced {
@@ -123,3 +129,26 @@ struct Redacted<RawValue>: CustomDumpStringConvertible {
 
 struct User: Equatable, Identifiable { var id: Int, name: String }
 struct HashableUser: Equatable, Identifiable, Hashable { var id: Int, name: String }
+
+@dynamicMemberLookup
+@propertyWrapper
+struct Wrapped<Value> {
+  var wrappedValue: Value
+  var projectedValue: Self { self }
+
+  subscript<NewValue>(dynamicMember keyPath: KeyPath<Value, NewValue>) -> NewValue {
+    self.wrappedValue[keyPath: keyPath]
+  }
+}
+
+struct Item {
+  @Wrapped var isInStock = true
+}
+
+struct OrderedDictionary<Key, Value>: CustomReflectable {
+  var pairs: KeyValuePairs<Key, Value>
+
+  var customMirror: Mirror {
+    Mirror(self.pairs, unlabeledChildren: self.pairs, displayStyle: .dictionary)
+  }
+}

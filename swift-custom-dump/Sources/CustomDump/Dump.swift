@@ -36,6 +36,15 @@ public func customDump<T>(
   return value
 }
 
+extension String {
+  /// Creates a string dumping the given value.
+  public init<Subject>(customDumping subject: Subject) {
+    var dump = ""
+    customDump(subject, to: &dump)
+    self = dump
+  }
+}
+
 /// Dumps the given value's contents using its mirror to the specified output stream.
 ///
 /// - Parameters:
@@ -56,9 +65,20 @@ public func customDump<T, TargetStream>(
   indent: Int = 0,
   maxDepth: Int = .max
 ) -> T where TargetStream: TextOutputStream {
+  _customDump(value, to: &target, name: name, indent: indent, isRoot: true, maxDepth: maxDepth)
+}
 
+@discardableResult
+func _customDump<T, TargetStream>(
+  _ value: T,
+  to target: inout TargetStream,
+  name: String?,
+  indent: Int,
+  isRoot: Bool,
+  maxDepth: Int
+) -> T where TargetStream: TextOutputStream {
   var idPerItem: [ObjectIdentifier: UInt] = [:]
-  var occurencePerType: [String: UInt] = [:]
+  var occurrencePerType: [String: UInt] = [:]
   var visitedItems: Set<ObjectIdentifier> = []
 
   func customDumpHelp<T, TargetStream>(
@@ -66,6 +86,7 @@ public func customDump<T, TargetStream>(
     to target: inout TargetStream,
     name: String?,
     indent: Int,
+    isRoot: Bool,
     maxDepth: Int
   ) where TargetStream: TextOutputStream {
     if T.self is AnyObject.Type, withUnsafeBytes(of: value, { $0.allSatisfy { $0 == 0 } }) {
@@ -89,10 +110,15 @@ public func customDump<T, TargetStream>(
           var childOut = ""
           let child = mirror.children.first!
           customDumpHelp(
-            child.value, to: &childOut, name: child.label, indent: 0, maxDepth: maxDepth - 1
+            child.value,
+            to: &childOut,
+            name: child.label,
+            indent: 0,
+            isRoot: false,
+            maxDepth: maxDepth - 1
           )
           if childOut.contains("\n") {
-            if maxDepth == 0 {
+            if maxDepth <= 0 {
               out.write("…")
             } else {
               out.write("\n")
@@ -102,7 +128,7 @@ public func customDump<T, TargetStream>(
           } else {
             out.write(childOut)
           }
-        } else if maxDepth == 0 {
+        } else if maxDepth <= 0 {
           out.write("…")
         } else {
           out.write("\n")
@@ -113,7 +139,13 @@ public func customDump<T, TargetStream>(
           for (offset, var child) in children.enumerated() {
             transform(&child, offset)
             customDumpHelp(
-              child.value, to: &out, name: child.label, indent: 2, maxDepth: maxDepth - 1)
+              child.value,
+              to: &out,
+              name: child.label,
+              indent: 2,
+              isRoot: false,
+              maxDepth: maxDepth - 1
+            )
             if offset != children.count - 1 {
               out.write(",")
             }
@@ -132,16 +164,18 @@ public func customDump<T, TargetStream>(
       out.write(value.customDumpDescription)
 
     case let (value as CustomDumpRepresentable, _):
-      customDumpHelp(value.customDumpValue, to: &out, name: nil, indent: 0, maxDepth: maxDepth - 1)
+      customDumpHelp(
+        value.customDumpValue, to: &out, name: nil, indent: 0, isRoot: false, maxDepth: maxDepth
+      )
 
     case let (value as AnyObject, .class?):
       let item = ObjectIdentifier(value)
-      var occurence = occurencePerType[typeName(mirror.subjectType), default: 0] {
-        didSet { occurencePerType[typeName(mirror.subjectType)] = occurence }
+      var occurrence = occurrencePerType[typeName(mirror.subjectType), default: 0] {
+        didSet { occurrencePerType[typeName(mirror.subjectType)] = occurrence }
       }
 
       var id: String {
-        let id = idPerItem[item, default: occurence]
+        let id = idPerItem[item, default: occurrence]
         idPerItem[item] = id
 
         return id > 1 ? "#\(id)" : ""
@@ -150,7 +184,7 @@ public func customDump<T, TargetStream>(
         out.write("\(typeName(mirror.subjectType))\(id)(↩︎)")
       } else {
         visitedItems.insert(item)
-        occurence += 1
+        occurrence += 1
         var children = Array(mirror.children)
 
         var superclassMirror = mirror.superclassMirror
@@ -175,24 +209,28 @@ public func customDump<T, TargetStream>(
         dumpChildren(
           of: mirror,
           prefix: "[", suffix: "]",
-          by: {
-            guard
-              let (lhsKey, _) = $0.value as? (key: AnyHashable, value: Any),
-              let (rhsKey, _) = $1.value as? (key: AnyHashable, value: Any)
-            else { return false }
+          by: mirror.subjectType is _UnorderedCollection.Type
+            ? {
+              guard
+                let (lhsKey, _) = $0.value as? (key: AnyHashable, value: Any),
+                let (rhsKey, _) = $1.value as? (key: AnyHashable, value: Any)
+              else { return false }
 
-            return _customDump(lhsKey.base, name: nil, indent: 0, maxDepth: 1)
-              < _customDump(rhsKey.base, name: nil, indent: 0, maxDepth: 1)
-          },
+              return _customDump(lhsKey.base, name: nil, indent: 0, isRoot: false, maxDepth: 1)
+                < _customDump(rhsKey.base, name: nil, indent: 0, isRoot: false, maxDepth: 1)
+            }
+            : nil,
           { child, _ in
             guard let pair = child.value as? (key: AnyHashable, value: Any) else { return }
-            let key = _customDump(pair.key.base, name: nil, indent: 0, maxDepth: maxDepth - 1)
+            let key = _customDump(
+              pair.key.base, name: nil, indent: 0, isRoot: false, maxDepth: maxDepth - 1
+            )
             child = (key, pair.value)
           })
       }
 
     case (_, .enum?):
-      out.write("\(typeName(mirror.subjectType)).")
+      out.write(isRoot ? "\(typeName(mirror.subjectType))." : ".")
       if let child = mirror.children.first {
         let childMirror = Mirror(customDumpReflecting: child.value)
         let associatedValuesMirror =
@@ -215,7 +253,7 @@ public func customDump<T, TargetStream>(
 
     case (_, .optional?):
       if let value = mirror.children.first?.value {
-        customDumpHelp(value, to: &out, name: nil, indent: 0, maxDepth: maxDepth)
+        customDumpHelp(value, to: &out, name: nil, indent: 0, isRoot: false, maxDepth: maxDepth)
       } else {
         out.write("nil")
       }
@@ -224,10 +262,13 @@ public func customDump<T, TargetStream>(
       dumpChildren(
         of: mirror,
         prefix: "Set([", suffix: "])",
-        by: {
-          _customDump($0.value, name: nil, indent: 0, maxDepth: 1)
-            < _customDump($1.value, name: nil, indent: 0, maxDepth: 1)
-        })
+        by: mirror.subjectType is _UnorderedCollection.Type
+          ? {
+            _customDump($0.value, name: nil, indent: 0, isRoot: false, maxDepth: 1)
+              < _customDump($1.value, name: nil, indent: 0, isRoot: false, maxDepth: 1)
+          }
+          : nil
+      )
 
     case (_, .struct?):
       dumpChildren(of: mirror, prefix: "\(typeName(mirror.subjectType))(", suffix: ")")
@@ -246,15 +287,18 @@ public func customDump<T, TargetStream>(
     default:
       if let value = stringFromStringProtocol(value) {
         if value.contains(where: \.isNewline) {
-          if maxDepth == 0 {
+          if maxDepth <= 0 {
             out.write("\"…\"")
           } else {
-            let hashes = String(repeating: "#", count: value.hashCount)
+            let hashes = String(repeating: "#", count: value.hashCount(isMultiline: true))
             out.write("\(hashes)\"\"\"")
             out.write("\n")
             print(value.indenting(by: name != nil ? 2 : 0), to: &out)
             out.write(name != nil ? "  \"\"\"\(hashes)" : "\"\"\"\(hashes)")
           }
+        } else if value.contains("\"") || value.contains("\\") {
+          let hashes = String(repeating: "#", count: max(value.hashCount(isMultiline: false), 1))
+          out.write("\(hashes)\"\(value)\"\(hashes)")
         } else {
           out.write(value.debugDescription)
         }
@@ -266,12 +310,14 @@ public func customDump<T, TargetStream>(
     target.write((name.map { "\($0): " } ?? "").appending(out).indenting(by: indent))
   }
 
-  customDumpHelp(value, to: &target, name: name, indent: indent, maxDepth: maxDepth)
+  customDumpHelp(
+    value, to: &target, name: name, indent: indent, isRoot: isRoot, maxDepth: maxDepth
+  )
   return value
 }
 
-func _customDump(_ value: Any, name: String?, indent: Int, maxDepth: Int) -> String {
+func _customDump(_ value: Any, name: String?, indent: Int, isRoot: Bool, maxDepth: Int) -> String {
   var out = ""
-  customDump(value, to: &out, name: name, indent: indent, maxDepth: maxDepth)
+  _customDump(value, to: &out, name: name, indent: indent, isRoot: isRoot, maxDepth: maxDepth)
   return out
 }

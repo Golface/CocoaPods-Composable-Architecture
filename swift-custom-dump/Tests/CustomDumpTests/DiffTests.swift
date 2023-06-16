@@ -103,11 +103,11 @@ final class DiffTests: XCTestCase {
       diff(
         User(),
         User()
-      )?.replacingOccurrences(of: "0x[[:xdigit:]]+", with: "…", options: .regularExpression),
+      )?.replacingOccurrences(of: "0x[[:xdigit:]]+", with: "0x…", options: .regularExpression),
       """
         DiffTests.User(
-      -   _: ObjectIdentifier(…),
-      +   _: ObjectIdentifier(…),
+      -   _: ObjectIdentifier(0x…),
+      +   _: ObjectIdentifier(0x…),
           id: 42,
           name: "Blob"
         )
@@ -239,6 +239,100 @@ final class DiffTests: XCTestCase {
         ]
       """
     )
+
+    XCTAssertNoDifference(
+      diff(
+        OrderedDictionary(pairs: [
+          1: User(
+            id: 1,
+            name: "Blob"
+          ),
+          2: User(
+            id: 2,
+            name: "Blob, Jr."
+          ),
+        ]),
+        OrderedDictionary(pairs: [
+          1: User(
+            id: 1,
+            name: "Blob"
+          ),
+          2: User(
+            id: 2,
+            name: "Blob, Sr."
+          ),
+          3: User(
+            id: 3,
+            name: "Dr. Blob"
+          ),
+        ])
+      ),
+      """
+        [
+          1: User(…),
+          2: User(
+            id: 2,
+      -     name: "Blob, Jr."
+      +     name: "Blob, Sr."
+          ),
+      +   3: User(
+      +     id: 3,
+      +     name: "Dr. Blob"
+      +   )
+        ]
+      """
+    )
+
+    XCTAssertNoDifference(
+      diff(
+        OrderedDictionary(pairs: [
+          0: User(
+            id: 0,
+            name: "Original Blob"
+          ),
+          1: User(
+            id: 1,
+            name: "Blob"
+          ),
+          2: User(
+            id: 2,
+            name: "Blob, Jr."
+          ),
+        ]),
+        OrderedDictionary(pairs: [
+          0: User(
+            id: 0,
+            name: "Original Blob"
+          ),
+          1: User(
+            id: 1,
+            name: "Blob"
+          ),
+          2: User(
+            id: 2,
+            name: "Blob, Sr."
+          ),
+          3: User(
+            id: 3,
+            name: "Dr. Blob"
+          ),
+        ])
+      ),
+      """
+        [
+          … (2 unchanged),
+          2: User(
+            id: 2,
+      -     name: "Blob, Jr."
+      +     name: "Blob, Sr."
+          ),
+      +   3: User(
+      +     id: 3,
+      +     name: "Dr. Blob"
+      +   )
+        ]
+      """
+    )
   }
 
   func testDictionaryCollapsing() {
@@ -295,6 +389,81 @@ final class DiffTests: XCTestCase {
           42.0,
       -   buzz: "Blob"
       +   buzz: "Glob"
+        )
+      """
+    )
+
+    XCTAssertNoDifference(
+      diff(
+        Nested.nest(.fizz(42, buzz: "Blob")),
+        Nested.nest(.fizz(42, buzz: "Glob"))
+      ),
+      """
+        Nested.nest(
+          .fizz(
+            42.0,
+      -     buzz: "Blob"
+      +     buzz: "Glob"
+          )
+        )
+      """
+    )
+
+    XCTAssertNoDifference(
+      diff(
+        Enum.foo,
+        Enum.buzz
+      ),
+      """
+      - Enum.foo
+      + Enum.buzz
+      """
+    )
+
+    XCTAssertNoDifference(
+      diff(
+        Nested.nest(.foo),
+        Nested.nest(.buzz)
+      ),
+      """
+      - Nested.nest(.foo)
+      + Nested.nest(.buzz)
+      """
+    )
+
+    XCTAssertNoDifference(
+      diff(
+        Nested.largerNest(1, .foo),
+        Nested.largerNest(1, .buzz)
+      ),
+      """
+        Nested.largerNest(
+          1,
+      -   .foo
+      +   .buzz
+        )
+      """
+    )
+  }
+
+  func testEnumCollapsing() {
+    enum Offset: Equatable {
+      case page(Int, perPage: Int = 10)
+    }
+    struct State: Equatable {
+      var offset: Offset
+      let result: String
+    }
+    XCTAssertNoDifference(
+      diff(
+        State(offset: .page(1), result: "Hello, world!"),
+        State(offset: .page(1), result: "Good night, moon!")
+      ),
+      """
+        DiffTests.State(
+          offset: .page(…),
+      -   result: "Hello, world!"
+      +   result: "Good night, moon!"
         )
       """
     )
@@ -905,7 +1074,7 @@ final class DiffTests: XCTestCase {
       diff(
         [
           "value": 29.99 as Float
-        ],
+        ] as [String: Any],
         [
           "value": 29.99 as Double
         ]
@@ -916,6 +1085,101 @@ final class DiffTests: XCTestCase {
       +   "value": 29.99 as Double
         ]
       """
+    )
+  }
+
+  func testCustomDictionary() {
+    XCTAssertEqual(
+      String(customDumping: Stack(elements: [(.init(rawValue: 0), "Hello")])),
+      """
+      [
+        #0: "Hello"
+      ]
+      """
+    )
+
+    XCTAssertEqual(
+      diff(
+        Stack(elements: [(.init(rawValue: 0), "Hello")]),
+        Stack(elements: [(.init(rawValue: 1), "Hello")])
+      ),
+      """
+        [
+      -   #0: "Hello"
+      +   #1: "Hello"
+        ]
+      """
+    )
+
+    struct Child {
+      struct State: Equatable {}
+    }
+    struct Parent {
+      struct State: Equatable {
+        var children: Stack<Child.State>
+      }
+    }
+    XCTAssertNoDifference(
+      diff(
+        Parent.State(children: Stack(elements: [(.init(rawValue: 0), Child.State())])),
+        Parent.State(children: Stack(elements: [(.init(rawValue: 1), Child.State())]))
+      ),
+      """
+        DiffTests.Parent.State(
+          children: [
+      -     #0: DiffTests.Child.State()
+      +     #1: DiffTests.Child.State()
+          ]
+        )
+      """
+    )
+  }
+
+  func testCustomDumpRepresentableCollapsing() {
+    struct Results: CustomDumpRepresentable, Equatable {
+      var customDumpValue: Any {
+        [1, 2]
+      }
+    }
+    struct State: Equatable {
+      var date: Double
+      var results: Results
+    }
+    XCTAssertNoDifference(
+      diff(
+        State(date: 123_456_789, results: Results()),
+        State(date: 123_456_790, results: Results())
+      ),
+      """
+        DiffTests.State(
+      -   date: 123456789.0,
+      +   date: 123456790.0,
+          results: […]
+        )
+      """
+    )
+  }
+}
+
+private struct Stack<State: Equatable>: CustomDumpReflectable, Equatable {
+  static func == (lhs: Self, rhs: Self) -> Bool {
+    zip(lhs.elements, rhs.elements).allSatisfy(==)
+  }
+
+  var elements: [(ID, State)]
+
+  struct ID: CustomDumpStringConvertible, Hashable {
+    let rawValue: Int
+    var customDumpDescription: String {
+      "#\(self.rawValue)"
+    }
+  }
+
+  var customDumpMirror: Mirror {
+    Mirror(
+      self,
+      unlabeledChildren: self.elements,
+      displayStyle: .dictionary
     )
   }
 }
