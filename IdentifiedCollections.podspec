@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "IdentifiedCollections"
-  spec.version = "0.6.0"
+  spec.version = "0.7.1"
   spec.summary = "A library of data structures for working with collections of identifiable elements in an ergonomic, performant way."
   spec.description  = <<-DESC
   A library of data structures for working with collections of identifiable elements in an ergonomic, performant way.

@@ -1,20 +1,20 @@
 PODS:
-  - _SwiftUINavigationState (0.5.0):
+  - _SwiftUINavigationState (0.7.2):
     - CasePaths (~> 0.10)
     - CustomDump (~> 0.6)
   - AsyncAlgorithms (0.0.3):
     - Collections (~> 1.0.3)
-  - CasePaths (0.11.0):
+  - CasePaths (0.14.1):
     - XCTestDynamicOverlay (~> 0.4)
-  - Clocks (0.2.0):
+  - Clocks (0.3.0):
     - AsyncAlgorithms (~> 0.0.3)
     - XCTestDynamicOverlay (~> 0.4)
-  - Collections (1.0.3):
+  - Collections (1.0.4):
     - DequeModule
     - OrderedCollections
-  - CombineSchedulers (0.9.1):
+  - CombineSchedulers (0.10.0):
     - XCTestDynamicOverlay (~> 0.4)
-  - ComposableArchitecture (0.49.2):
+  - ComposableArchitecture (0.54.1):
     - _SwiftUINavigationState
     - CasePaths (~> 0.10)
     - Clocks (~> 0.1)
@@ -23,17 +23,17 @@ PODS:
     - Dependencies (~> 0.1)
     - IdentifiedCollections (~> 0.4)
     - XCTestDynamicOverlay (~> 0.5)
-  - CustomDump (0.6.1):
+  - CustomDump (0.10.3):
     - XCTestDynamicOverlay (~> 0.4)
-  - Dependencies (0.1.3):
+  - Dependencies (0.5.1):
     - Clocks (~> 0.2)
     - CombineSchedulers (~> 0.9)
     - XCTestDynamicOverlay (~> 0.8)
-  - DequeModule (1.0.3)
-  - IdentifiedCollections (0.6.0):
+  - DequeModule (1.0.4)
+  - IdentifiedCollections (0.7.1):
     - OrderedCollections (~> 1.0.3)
   - OrderedCollections (1.0.4)
-  - XCTestDynamicOverlay (0.8.0)
+  - XCTestDynamicOverlay (0.8.5)
 
 DEPENDENCIES:
   - _SwiftUINavigationState (from `../`)
@@ -79,20 +79,20 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  _SwiftUINavigationState: 40ff1b173a628406565fe8b95e1b2b02f48298f0
+  _SwiftUINavigationState: 38c09f8d88f3fd7370970948718d3d426b52550f
   AsyncAlgorithms: 72b50ac2b5432d9ca3514abfe2fbf16a9de61308
-  CasePaths: 28a42ace85361c37b16a5acab16d9dbff29225f7
-  Clocks: 8da95531bb67703938f5bf99c702b24ad3b0c9e2
-  Collections: 872f8643e3642cf01e0e96f962ed6cb9735cdd12
-  CombineSchedulers: 4e37d90d6f645dd499300751978ae5c55bce56ac
-  ComposableArchitecture: 2eb1e2aee18a6e61d199a552175c1af372a20999
-  CustomDump: 2056b61634a41826adb69d56061a397cf81e5b99
-  Dependencies: dc5e5ae5d39780d467cf8e9f0589d1a7249b7ee0
-  DequeModule: f12ad627184cc27e4c9b86ce440c19476f34e696
-  IdentifiedCollections: 728deda2dbb06d66f683b42148829b2c8f073047
+  CasePaths: ead63b5a519b89e6904c127f28cf4b8f54cb3c29
+  Clocks: 128eabb2d7a8dd5f377c57642948ceeb6d36f54e
+  Collections: e759858055a6cf579e5789d18da92613262fcd91
+  CombineSchedulers: 0f9711ad3aa12b9d9a26115cd0af35f6a0d9de3a
+  ComposableArchitecture: b403271bf14b5d7f6accf5943f6b1148bc524110
+  CustomDump: 11aa6c071b491951173b1bce484f66e2ccba9dbb
+  Dependencies: a5cb6b839249038bcd23af1eb2a3c63fe1e8c40f
+  DequeModule: 4ba7a109df5ff6a539107c73e6b9b1152e2e2297
+  IdentifiedCollections: 89eb5350ca4fa1e7c2aa1a5a4728241cf482e106
   OrderedCollections: 5319fdb169698d187d0374296edfafeffefcc45d
-  XCTestDynamicOverlay: 848dcb2f3e9c1a1bcfd0712285b656252e578bc8
+  XCTestDynamicOverlay: ea532697865d8c28ae8426414d321c7162b5fe90
 
 PODFILE CHECKSUM: 07920fe6d36ec9f811fcdbb5b5be0bad3574929c
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

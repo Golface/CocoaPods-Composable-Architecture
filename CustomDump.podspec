@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "CustomDump"
-  spec.version = "0.6.1"
+  spec.version = "0.10.3"
   spec.summary = "A collection of tools for debugging, diffing, and testing your application's data structures."
   spec.description  = <<-DESC
   A collection of tools for debugging, diffing, and testing your application's data structures.

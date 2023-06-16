@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "_SwiftUINavigationState"
-  spec.version = "0.5.0"
+  spec.version = "0.7.2"
   spec.summary = "A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind."
   spec.description = <<-DESC
   The Composable Architecture (TCA, for short) is a library for building applications in a consistent and understandable way,

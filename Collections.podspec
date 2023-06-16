@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "Collections"
-  spec.version = "1.0.3"
+  spec.version = "1.0.4"
   spec.summary = "Swift Collections is an open-source package of data structure implementations for the Swift programming language."
   spec.description  = <<-DESC
   Swift Collections is an open-source package of data structure implementations for the Swift programming language.

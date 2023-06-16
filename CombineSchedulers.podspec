@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "CombineSchedulers"
-  spec.version = "0.9.1"
+  spec.version = "0.10.0"
   spec.summary = "⏰ A few schedulers that make working with Combine more testable and more versatile."
   spec.description  = <<-DESC
   A few schedulers that make working with Combine more testable and more versatile.
