@@ -6,10 +6,9 @@ import XCTest
 @MainActor
 final class SharedStateTests: XCTestCase {
   func testTabRestoredOnReset() async {
-    let store = TestStore(
-      initialState: SharedState.State(),
-      reducer: SharedState()
-    )
+    let store = TestStore(initialState: SharedState.State()) {
+      SharedState()
+    }
 
     await store.send(.selectTab(.profile)) {
       $0.currentTab = .profile
@@ -26,10 +25,9 @@ final class SharedStateTests: XCTestCase {
   }
 
   func testTabSelection() async {
-    let store = TestStore(
-      initialState: SharedState.State(),
-      reducer: SharedState()
-    )
+    let store = TestStore(initialState: SharedState.State()) {
+      SharedState()
+    }
 
     await store.send(.selectTab(.profile)) {
       $0.currentTab = .profile
@@ -46,10 +44,9 @@ final class SharedStateTests: XCTestCase {
   }
 
   func testSharedCounts() async {
-    let store = TestStore(
-      initialState: SharedState.State(),
-      reducer: SharedState()
-    )
+    let store = TestStore(initialState: SharedState.State()) {
+      SharedState()
+    }
 
     await store.send(.counter(.incrementButtonTapped)) {
       $0.counter.count = 1
@@ -71,14 +68,15 @@ final class SharedStateTests: XCTestCase {
     let store = TestStore(
       initialState: SharedState.Counter.State(
         alert: nil, count: 3, maxCount: 0, minCount: 0, numberOfCounts: 0
-      ),
-      reducer: SharedState.Counter()
-    )
+      )
+    ) {
+      SharedState.Counter()
+    }
 
     await store.send(.isPrimeButtonTapped) {
-      $0.alert = AlertState(
-        title: TextState("👍 The number \($0.count) is prime!")
-      )
+      $0.alert = AlertState {
+        TextState("👍 The number 3 is prime!")
+      }
     }
     await store.send(.alertDismissed) {
       $0.alert = nil
@@ -89,14 +87,15 @@ final class SharedStateTests: XCTestCase {
     let store = TestStore(
       initialState: SharedState.Counter.State(
         alert: nil, count: 6, maxCount: 0, minCount: 0, numberOfCounts: 0
-      ),
-      reducer: SharedState.Counter()
-    )
+      )
+    ) {
+      SharedState.Counter()
+    }
 
     await store.send(.isPrimeButtonTapped) {
-      $0.alert = AlertState(
-        title: TextState("👎 The number \($0.count) is not prime :(")
-      )
+      $0.alert = AlertState {
+        TextState("👎 The number 6 is not prime :(")
+      }
     }
     await store.send(.alertDismissed) {
       $0.alert = nil

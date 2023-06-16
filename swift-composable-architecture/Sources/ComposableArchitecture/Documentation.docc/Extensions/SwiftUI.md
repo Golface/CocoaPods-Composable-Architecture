@@ -14,22 +14,17 @@ The Composable Architecture can be used to power applications built in many fram
 - ``IfLetStore``
 - ``ForEachStore``
 - ``SwitchStore``
+- ``NavigationStackStore``
 
 ### Bindings
 
 - <doc:Bindings>
 - ``ViewStore/binding(get:send:)-65xes``
-- ``BindableState``
+- ``BindingState``
 - ``BindableAction``
 - ``BindingAction``
 - ``BindingReducer``
-- ``ViewStore/binding(_:file:fileID:line:)``
-
-### View state
-
-- ``AlertState``
-- ``ConfirmationDialogState``
-- ``TextState``
+- ``ViewStore/binding(_:fileID:line:)``
 
 <!--DocC: Can't currently document `View` extensions-->
 <!--### View Modifiers-->

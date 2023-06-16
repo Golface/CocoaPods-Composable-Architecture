@@ -6,13 +6,12 @@ import XCTest
 @MainActor
 final class TwoFactorCoreTests: XCTestCase {
   func testFlow_Success() async {
-    let store = TestStore(
-      initialState: TwoFactor.State(token: "deadbeefdeadbeef"),
-      reducer: TwoFactor()
-    )
-
-    store.dependencies.authenticationClient.twoFactor = { _ in
-      AuthenticationResponse(token: "deadbeefdeadbeef", twoFactorRequired: false)
+    let store = TestStore(initialState: TwoFactor.State(token: "deadbeefdeadbeef")) {
+      TwoFactor()
+    } withDependencies: {
+      $0.authenticationClient.twoFactor = { _ in
+        AuthenticationResponse(token: "deadbeefdeadbeef", twoFactorRequired: false)
+      }
     }
 
     await store.send(.codeChanged("1")) {
@@ -41,13 +40,12 @@ final class TwoFactorCoreTests: XCTestCase {
   }
 
   func testFlow_Failure() async {
-    let store = TestStore(
-      initialState: TwoFactor.State(token: "deadbeefdeadbeef"),
-      reducer: TwoFactor()
-    )
-
-    store.dependencies.authenticationClient.twoFactor = { _ in
-      throw AuthenticationError.invalidTwoFactor
+    let store = TestStore(initialState: TwoFactor.State(token: "deadbeefdeadbeef")) {
+      TwoFactor()
+    } withDependencies: {
+      $0.authenticationClient.twoFactor = { _ in
+        throw AuthenticationError.invalidTwoFactor
+      }
     }
 
     await store.send(.codeChanged("1234")) {
@@ -58,12 +56,12 @@ final class TwoFactorCoreTests: XCTestCase {
       $0.isTwoFactorRequestInFlight = true
     }
     await store.receive(.twoFactorResponse(.failure(AuthenticationError.invalidTwoFactor))) {
-      $0.alert = AlertState(
-        title: TextState(AuthenticationError.invalidTwoFactor.localizedDescription)
-      )
+      $0.alert = AlertState {
+        TextState(AuthenticationError.invalidTwoFactor.localizedDescription)
+      }
       $0.isTwoFactorRequestInFlight = false
     }
-    await store.send(.alertDismissed) {
+    await store.send(.alert(.dismiss)) {
       $0.alert = nil
     }
     await store.finish()

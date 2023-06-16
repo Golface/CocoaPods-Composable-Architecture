@@ -15,7 +15,8 @@
 ///   .ifLet(\.child, action: /Action.child)
 /// }
 /// ```
-public struct CombineReducers<Reducers: ReducerProtocol>: ReducerProtocol {
+public struct CombineReducers<State, Action, Reducers: ReducerProtocol>: ReducerProtocol
+where State == Reducers.State, Action == Reducers.Action {
   @usableFromInline
   let reducers: Reducers
 
@@ -24,7 +25,7 @@ public struct CombineReducers<Reducers: ReducerProtocol>: ReducerProtocol {
   /// - Parameter build: A reducer builder.
   @inlinable
   public init(
-    @ReducerBuilderOf<Reducers> _ build: () -> Reducers
+    @ReducerBuilder<State, Action> _ build: () -> Reducers
   ) {
     self.init(internal: build())
   }
@@ -41,15 +42,3 @@ public struct CombineReducers<Reducers: ReducerProtocol>: ReducerProtocol {
     self.reducers.reduce(into: &state, action: action)
   }
 }
-
-#if swift(>=5.7)
-  extension ReducerProtocol {
-    // NB: This overload is provided to work around https://github.com/apple/swift/issues/60445
-    /// Combines multiple reducers into a single reducer.
-    public func CombineReducers<State, Action>(
-      @ReducerBuilder<State, Action> _ build: () -> some ReducerProtocol<State, Action>
-    ) -> some ReducerProtocol<State, Action> {
-      ComposableArchitecture.CombineReducers(build)
-    }
-  }
-#endif

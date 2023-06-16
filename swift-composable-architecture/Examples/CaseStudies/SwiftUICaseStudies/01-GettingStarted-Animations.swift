@@ -41,7 +41,7 @@ struct Animations: ReducerProtocol {
   @Dependency(\.continuousClock) var clock
 
   func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
-    enum CancelID {}
+    enum CancelID { case rainbow }
 
     switch action {
     case .alertDismissed:
@@ -59,22 +59,27 @@ struct Animations: ReducerProtocol {
           try await self.clock.sleep(for: .seconds(1))
         }
       }
-      .cancellable(id: CancelID.self)
+      .cancellable(id: CancelID.rainbow)
 
     case .resetButtonTapped:
-      state.alert = AlertState(
-        title: TextState("Reset state?"),
-        primaryButton: .destructive(
-          TextState("Reset"),
+      state.alert = AlertState {
+        TextState("Reset state?")
+      } actions: {
+        ButtonState(
+          role: .destructive,
           action: .send(.resetConfirmationButtonTapped, animation: .default)
-        ),
-        secondaryButton: .cancel(TextState("Cancel"))
-      )
+        ) {
+          TextState("Reset")
+        }
+        ButtonState(role: .cancel) {
+          TextState("Cancel")
+        }
+      }
       return .none
 
     case .resetConfirmationButtonTapped:
       state = State()
-      return .cancel(id: CancelID.self)
+      return .cancel(id: CancelID.rainbow)
 
     case let .setColor(color):
       state.circleColor = color
@@ -134,7 +139,7 @@ struct AnimationsView: View {
         Button("Reset") { viewStore.send(.resetButtonTapped) }
           .padding([.horizontal, .bottom])
       }
-      .alert(self.store.scope(state: \.alert), dismiss: .alertDismissed)
+      .alert(self.store.scope(state: \.alert, action: { $0 }), dismiss: .alertDismissed)
       .navigationBarTitleDisplayMode(.inline)
     }
   }
@@ -147,19 +152,17 @@ struct AnimationsView_Previews: PreviewProvider {
     Group {
       NavigationView {
         AnimationsView(
-          store: Store(
-            initialState: Animations.State(),
-            reducer: Animations()
-          )
+          store: Store(initialState: Animations.State()) {
+            Animations()
+          }
         )
       }
 
       NavigationView {
         AnimationsView(
-          store: Store(
-            initialState: Animations.State(),
-            reducer: Animations()
-          )
+          store: Store(initialState: Animations.State()) {
+            Animations()
+          }
         )
       }
       .environment(\.colorScheme, .dark)

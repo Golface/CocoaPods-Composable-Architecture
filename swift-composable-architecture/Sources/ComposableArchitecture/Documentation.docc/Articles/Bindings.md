@@ -91,7 +91,7 @@ struct SettingsView: View {
 }
 ```
 
-### Bindable state, actions, and reducers
+### Binding state, actions, and reducers
 
 Deriving ad hoc bindings requires many manual steps that can feel tedious, especially for screens
 with many controls driven by many bindings. Because of this, the Composable Architecture comes with
@@ -177,20 +177,20 @@ struct Settings: ReducerProtocol {
 ```
 
 This is a _lot_ of boilerplate for something that should be simple. Luckily, we can dramatically
-eliminate this boilerplate using ``BindableState``, ``BindableAction``, and ``BindingReducer``.
+eliminate this boilerplate using ``BindingState``, ``BindableAction``, and ``BindingReducer``.
 
-First, we can annotate each bindable value of state with the ``BindableState`` property wrapper:
+First, we can annotate each bindable value of state with the ``BindingState`` property wrapper:
 
 ```swift
 struct Settings: ReducerProtocol {
   struct State: Equatable {
-    @BindableState var digest = Digest.daily
-    @BindableState var displayName = ""
-    @BindableState var enableNotifications = false
+    @BindingState var digest = Digest.daily
+    @BindingState var displayName = ""
+    @BindingState var enableNotifications = false
     var isLoading = false
-    @BindableState var protectMyPosts = false
-    @BindableState var sendEmailNotifications = false
-    @BindableState var sendMobileNotifications = false
+    @BindingState var protectMyPosts = false
+    @BindingState var sendEmailNotifications = false
+    @BindingState var sendMobileNotifications = false
   }
 
   // ...
@@ -232,7 +232,7 @@ struct Settings: ReducerProtocol {
 ```
 
 Binding actions are constructed and sent to the store by calling
-``ViewStore/binding(_:file:fileID:line:)`` with a key path to the bindable state:
+``ViewStore/binding(_:fileID:line:)`` with a key path to the binding state:
 
 ```swift
 TextField("Display name", text: viewStore.binding(\.$displayName))
@@ -263,10 +263,9 @@ send a ``BindingAction`` action that describes which key path is being set to wh
 `.set(\.$displayName, "Blob")`:
 
 ```swift
-let store = TestStore(
-  initialState: Settings.State(),
-  reducer: Settings()
-)
+let store = TestStore(initialState: Settings.State()) {
+  Settings()
+}
 
 store.send(.set(\.$displayName, "Blob")) {
   $0.displayName = "Blob"
