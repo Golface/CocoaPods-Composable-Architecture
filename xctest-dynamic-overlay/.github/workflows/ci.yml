@@ -9,7 +9,7 @@ on:
       - '*'
 
 concurrency:
-  group: docs-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run tests
-      run: make test
+      run: make test-linux
 
   wasm:
      name: SwiftWASM

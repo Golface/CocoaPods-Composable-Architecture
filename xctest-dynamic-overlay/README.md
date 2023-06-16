@@ -31,13 +31,19 @@ import XCTest
 
 This is due to a confluence of problems, including test header search paths, linker issues, and more. XCTest just doesn't seem to be built to be loaded alongside your application or library code.
 
-## Solution
-
-That doesn't mean we can't try! XCTest Dynamic Overlay is a microlibrary that exposes an `XCTFail` function that can be invoked from anywhere. It dynamically loads XCTest functionality at runtime, which means your code will continue to compile just fine.
+So, the XCTest Dynamic Overlay library is a microlibrary that dynamically loads the `XCTFail` symbol
+at runtime and exposes it publicly so that it can be used from anywhere. This means you can import
+this library instead of XCTest:
 
 ```swift
 import XCTestDynamicOverlay // ✅
 ```
+
+…and your application or library will continue to compile just fine.
+
+> ⚠️ Important: The dynamically loaded `XCTFail` is only available in `DEBUG` builds in order
+to prevent App Store rejections due to runtime loading of symbols.
+
 
 ## Example
 
@@ -95,7 +101,7 @@ One way to do this is to create an instance of the `AnalyticsClient` type that s
 import XCTest
 
 extension AnalyticsClient {
-  static let unimplemented = Self(
+  static let testValue = Self(
     track: { _ in XCTFail("\(Self.self).track is unimplemented.") }
   )
 }
@@ -106,7 +112,7 @@ With this you can write a test that proves analytics are never tracked, and even
 ```swift
 func testValidation() {
   let viewModel = LoginViewModel(
-    analytics: .unimplemented
+    analytics: .testValue
   )
 
   // ...
@@ -115,7 +121,7 @@ func testValidation() {
 
 However, you cannot ship this code with the target that defines `AnalyticsClient`. You either need to extract it out to a test support module (which means `AnalyticsClient` must also be extracted), or the code must be confined to a test target and thus not shareable.
 
-With XCTest Dynamic Overlay we can have our cake and eat it too 😋. We can define both the client type and the unimplemented instance right next to each in application code without needing to extract out needless modules or targets:
+With XCTest Dynamic Overlay we can have our cake and eat it too 😋. We can define both the client type and the unimplemented test instance right next to each in application code without needing to extract out needless modules or targets:
 
 ```swift
 struct AnalyticsClient {
@@ -130,7 +136,7 @@ struct AnalyticsClient {
 import XCTestDynamicOverlay
 
 extension AnalyticsClient {
-  static let unimplemented = Self(
+  static let testValue = Self(
     track: { _ in XCTFail("\(Self.self).track is unimplemented.") }
   )
 }
@@ -140,7 +146,7 @@ XCTest Dynamic Overlay also comes with a helper that simplifies this exact patte
 
 ```swift
 extension AnalyticsClient {
-  static let unimplemented = Self(
+  static let testValue = Self(
     track: unimplemented("\(Self.self).track")
   )
 }
@@ -156,7 +162,7 @@ struct AppDependencies {
 }
 
 extension AppDependencies {
-  static let unimplemented = Self(
+  static let testValue = Self(
     date: unimplemented("\(Self.self).date", placeholder: Date()),
     fetchUser: unimplemented("\(Self.self).fetchUser"),
     uuid: unimplemented("\(Self.self).uuid", placeholder: UUID())
