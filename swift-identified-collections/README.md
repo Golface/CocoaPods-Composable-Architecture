@@ -1,6 +1,7 @@
 # Swift Identified Collections
 
 [![CI](https://github.com/pointfreeco/swift-identified-collections/workflows/CI/badge.svg)](https://actions-badge.atrox.dev/pointfreeco/swift-identified-collections/goto)
+[![Slack](https://img.shields.io/badge/slack-chat-informational.svg?label=Slack&logo=slack)](http://pointfree.co/slack-invite)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpointfreeco%2Fswift-identified-collections%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/pointfreeco/swift-identified-collections)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpointfreeco%2Fswift-identified-collections%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/pointfreeco/swift-identified-collections)
 
@@ -245,25 +246,23 @@ has been benchmarked with
 
 ![](.github/benchmark.png)
 
-## Installation
+## Community
 
-You can add Identified Collections to an Xcode project by adding it as a package dependency.
+If you want to discuss this library or have a question about how to use it to solve 
+a particular problem, there are a number of places you can discuss with fellow 
+[Point-Free](http://www.pointfree.co) enthusiasts:
 
-> https://github.com/pointfreeco/swift-identified-collections
-
-If you want to use Identified Collections in a [SwiftPM](https://swift.org/package-manager/)
-project, it's as simple as adding a `dependencies` clause to your `Package.swift`:
-
-``` swift
-dependencies: [
-  .package(url: "https://github.com/pointfreeco/swift-identified-collections", from: "0.5.0")
-],
-```
+* For long-form discussions, we recommend the [discussions](http://github.com/pointfreeco/swift-identified-collections/discussions) tab of this repo.
+* For casual chat, we recommend the [Point-Free Community Slack](http://pointfree.co/slack-invite).
 
 ## Documentation
 
 The latest documentation for Identified Collections' APIs is available
 [here](https://pointfreeco.github.io/swift-identified-collections/main/documentation/identifiedcollections/).
+
+## Translations
+
+- [Korean](https://gist.github.com/havilog/594bcaba48e7e40cb0395243fa96b47e)
 
 ## Interested in learning more?
 
