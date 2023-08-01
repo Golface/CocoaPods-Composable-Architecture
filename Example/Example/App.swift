@@ -7,7 +7,7 @@
 
 import ComposableArchitecture
 
-struct AppFeature: ReducerProtocol {
+struct AppFeature: Reducer {
     
     struct State: Equatable {
         
@@ -23,7 +23,7 @@ struct AppFeature: ReducerProtocol {
         
     }
     
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .increase:
             state.number += 1

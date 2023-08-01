@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "Clocks"
-  spec.version = "0.3.0"
+  spec.version = "1.0.0"
   spec.summary = "⏰ A few clocks that make working with Swift concurrency more testable and more versatile."
   spec.description = <<-DESC
   ⏰ A few clocks that make working with Swift concurrency more testable and more versatile.
@@ -19,6 +19,7 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/pointfreeco/swift-case-paths.git", :tag => "#{spec.version}" }
   spec.source_files  = "swift-clocks/Sources/**/*.swift"
 
-  spec.dependency "XCTestDynamicOverlay", "~> 0.4"
-  spec.dependency "AsyncAlgorithms", "~> 0.0.3"
+  spec.dependency "XCTestDynamicOverlay", "<= 1.0"
+  spec.dependency "AsyncAlgorithms", "<= 0.0.3"
+  spec.dependency "ConcurrencyExtras", "<= 1.0"
 end

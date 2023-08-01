@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "CasePaths"
-  spec.version = "0.14.1"
+  spec.version = "1.0.0"
   spec.summary = "🧰 Case paths bring the power and ergonomics of key paths to enums!"
   spec.description = <<-DESC
   Case paths bring the power and ergonomics of key paths to enums!
@@ -19,5 +19,5 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/pointfreeco/swift-case-paths.git", :tag => "#{spec.version}" }
   spec.source_files  = "swift-case-paths/Sources/CasePaths/**/*.swift"
   
-  spec.dependency "XCTestDynamicOverlay", "~> 0.4"
+  spec.dependency "XCTestDynamicOverlay", "<= 1.0"
 end

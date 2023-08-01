@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "CustomDump"
-  spec.version = "0.10.3"
+  spec.version = "1.0.0"
   spec.summary = "A collection of tools for debugging, diffing, and testing your application's data structures."
   spec.description  = <<-DESC
   A collection of tools for debugging, diffing, and testing your application's data structures.
@@ -19,5 +19,5 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/pointfreeco/swift-custom-dump.git", :tag => "#{spec.version}" }
   spec.source_files  = "swift-custom-dump/Sources/**/*.swift"
   
-  spec.dependency "XCTestDynamicOverlay", "~> 0.4"
+  spec.dependency "XCTestDynamicOverlay", "<= 1.0"
 end

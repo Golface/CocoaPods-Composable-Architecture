@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
-  spec.name = "_SwiftUINavigationState"
-  spec.version = "0.7.2"
+  spec.name = "SwiftUINavigationCore"
+  spec.version = "1.0.0"
   spec.summary = "A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind."
   spec.description = <<-DESC
   The Composable Architecture (TCA, for short) is a library for building applications in a consistent and understandable way,
@@ -18,8 +18,8 @@ Pod::Spec.new do |spec|
   spec.swift_version = '5.7'
   
   spec.source = { :git => "https://github.com/pointfreeco/swiftui-navigation", :tag => "#{spec.version}" }
-  spec.source_files = "swiftui-navigation/Sources/_SwiftUINavigationState/**/*.swift"
+  spec.source_files = "swiftui-navigation/Sources/SwiftUINavigationCore/**/*.swift"
   
-  spec.dependency "CustomDump", "~> 0.6"
-  spec.dependency "CasePaths", "~> 0.10"
+  spec.dependency "CustomDump", "<= 1.0"
+  spec.dependency "CasePaths", "<= 1.0"
 end

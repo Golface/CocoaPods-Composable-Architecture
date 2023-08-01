@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "Dependencies"
-  spec.version = "0.5.1"
+  spec.version = "1.0.0"
   spec.summary = "A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind."
   spec.description = <<-DESC
   The Composable Architecture (TCA, for short) is a library for building applications in a consistent and understandable way,
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/pointfreeco/swift-dependencies", :tag => "#{spec.version}" }
   spec.source_files = "swift-dependencies/Sources/Dependencies/**/*.swift"
   
-  spec.dependency "CombineSchedulers", "~> 0.9"
-  spec.dependency "XCTestDynamicOverlay", "~> 0.8"
-  spec.dependency "Clocks", "~> 0.2"
+  spec.dependency "CombineSchedulers", "<= 1.0"
+  spec.dependency "XCTestDynamicOverlay", "<= 1.0"
+  spec.dependency "Clocks", "<= 1.0"
 end

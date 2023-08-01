@@ -34,5 +34,6 @@ Adding all of pacakges to `Podfile`
   pod 'AsyncAlgorithms', :git => 'https://github.com/Golface/CocoaPods-Composable-Architecture.git'
   pod 'Dependencies', :git => 'https://github.com/Golface/CocoaPods-Composable-Architecture.git'
   pod 'ComposableArchitecture', :git => 'https://github.com/Golface/CocoaPods-Composable-Architecture.git'
-  pod '_SwiftUINavigationState', :git => 'https://github.com/Golface/CocoaPods-Composable-Architecture.git'
+  pod 'SwiftUINavigationCore', :git => 'https://github.com/Golface/CocoaPods-Composable-Architecture.git'
+  pod 'ConcurrencyExtras', :git => 'https://github.com/Golface/CocoaPods-Composable-Architecture.git'
 ```

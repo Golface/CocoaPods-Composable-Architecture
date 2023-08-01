@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "CombineSchedulers"
-  spec.version = "0.10.0"
+  spec.version = "1.0.0"
   spec.summary = "⏰ A few schedulers that make working with Combine more testable and more versatile."
   spec.description  = <<-DESC
   A few schedulers that make working with Combine more testable and more versatile.
@@ -19,5 +19,6 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/pointfreeco/combine-schedulers.git", :tag => "#{spec.version}" }
   spec.source_files  = "combine-schedulers/Sources/**/*.swift"
   
-  spec.dependency "XCTestDynamicOverlay", "~> 0.4"
+  spec.dependency "XCTestDynamicOverlay", "<= 1.0"
+  spec.dependency "ConcurrencyExtras", "<= 1.0"
 end

@@ -13,7 +13,7 @@ struct ContentView: View {
     let store: StoreOf<AppFeature>
     
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store, observe: { $0 }) { viewStore in
             VStack(spacing: 0) {
                 Text("Hello, Composable Architecture!")
                     .font(.title3)
