@@ -1,5 +1,17 @@
 import Foundation
 
+public struct XCTFailContext {
+  @TaskLocal public static var current: Self?
+
+  public var file: StaticString
+  public var line: UInt
+
+  public init(file: StaticString, line: UInt) {
+    self.file = file
+    self.line = line
+  }
+}
+
 #if DEBUG
   #if canImport(ObjectiveC)
     /// This function generates a failure immediately and unconditionally.
@@ -12,16 +24,16 @@ import Foundation
     ///   results.
     @_disfavoredOverload
     public func XCTFail(_ message: String = "") {
+      if let context = XCTFailContext.current {
+        XCTFail(message, file: context.file, line: context.line)
+        return
+      }
       var message = message
       attachHostApplicationWarningIfNeeded(&message)
       guard
         let currentTestCase = XCTCurrentTestCase,
-        let XCTIssue = NSClassFromString("XCTIssue")
-          as Any as? NSObjectProtocol,
-        let alloc = XCTIssue.perform(NSSelectorFromString("alloc"))?
-          .takeUnretainedValue(),
-        let issue =
-          alloc
+        let issue = (NSClassFromString("XCTIssue") as Any as? NSObjectProtocol)?
+          .perform(NSSelectorFromString("alloc"))?.takeUnretainedValue()
           .perform(
             Selector(("initWithType:compactDescription:")),
             with: 0,
@@ -33,6 +45,19 @@ import Foundation
           runtimeWarn(message)
         }
         return
+      }
+      if let testFrame = Thread.callStackSymbols.enumerated().first(where: { isTestFrame($1) }),
+        let sourceCodeContext =
+          (NSClassFromString("XCTSourceCodeContext") as Any as? NSObjectProtocol)?
+          .perform(NSSelectorFromString("alloc"))?.takeUnretainedValue()
+          .perform(
+            Selector(("initWithCallStackAddresses:location:")),
+            with: Array(Thread.callStackReturnAddresses[testFrame.offset...]),
+            with: nil
+          )?
+          .takeUnretainedValue()
+      {
+        _ = issue.perform(Selector(("setSourceCodeContext:")), with: sourceCodeContext)
       }
       _ = currentTestCase.perform(Selector(("recordIssue:")), with: issue)
     }
