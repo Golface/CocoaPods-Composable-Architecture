@@ -709,71 +709,64 @@ final class DumpTests: XCTestCase {
 
   func testKeyPath() {
     var dump = ""
+    #if swift(>=5.9)
+      if #available(macOS 13.3, iOS 16.4, watchOS 9.4, tvOS 16.4, *) {
+        dump = ""
+        customDump(\UserClass.name, to: &dump)
+        XCTAssertNoDifference(
+          dump,
+          #"""
+          \UserClass.name
+          """#
+        )
 
-    // NB: This code path marks the expectation of relying on SE-0369's
-    // `AnyKeyPath.debugDescription`, which currently has a crash related to dynamic member lookup:
-    // https://github.com/apple/swift/issues/64865
-    //
-    // #if swift(>=5.8)
-    //   if #available(macOS 13.3, iOS 16.4, watchOS 9.4, tvOS 16.4, *) {
-    //     dump = ""
-    //     customDump(\UserClass.name, to: &dump)
-    //     XCTAssertNoDifference(
-    //       dump,
-    //       #"""
-    //       \UserClass.name
-    //       """#
-    //     )
-    //
-    //     dump = ""
-    //     customDump(\Pair.driver.name, to: &dump)
-    //     XCTAssertNoDifference(
-    //       dump,
-    //       #"""
-    //       \Pair.driver.name
-    //       """#
-    //     )
-    //
-    //     dump = ""
-    //     customDump(\User.name.count, to: &dump)
-    //     XCTAssertNoDifference(
-    //       dump,
-    //       #"""
-    //       \User.name.count
-    //       """#
-    //     )
-    //
-    //     dump = ""
-    //     customDump(\(x: Double, y: Double).x, to: &dump)
-    //     XCTAssertNoDifference(
-    //       dump,
-    //       #"""
-    //       \(x: Double, y: Double).x
-    //       """#
-    //     )
-    //
-    //     dump = ""
-    //     customDump(\Item.$isInStock, to: &dump)
-    //     XCTAssertNoDifference(
-    //       dump,
-    //       #"""
-    //       \Item.$isInStock
-    //       """#
-    //     )
-    //
-    //     // NB: This currently crashes when using Swift's `debugDescription`:
-    //     // https://github.com/apple/swift/issues/64865
-    //     dump = ""
-    //     customDump(\Wrapped<String>.count, to: &dump)
-    //     XCTAssertNoDifference(
-    //       dump,
-    //       #"""
-    //       \Wrapped.count
-    //       """#
-    //     )
-    //     return
-    //   }
-    // #endif
+        dump = ""
+        customDump(\Pair.driver.name, to: &dump)
+        XCTAssertNoDifference(
+          dump,
+          #"""
+          \Pair.driver.name
+          """#
+        )
+
+        dump = ""
+        customDump(\User.name.count, to: &dump)
+        XCTAssertNoDifference(
+          dump,
+          #"""
+          \User.name.count
+          """#
+        )
+
+        dump = ""
+        customDump(\(x: Double, y: Double).x, to: &dump)
+        XCTAssertNoDifference(
+          dump,
+          #"""
+          \(x: Double, y: Double).x
+          """#
+        )
+
+        dump = ""
+        customDump(\Item.$isInStock, to: &dump)
+        XCTAssertNoDifference(
+          dump,
+          #"""
+          \Item.$isInStock
+          """#
+        )
+
+        dump = ""
+        customDump(\Wrapped<String>.count, to: &dump)
+        XCTAssertNoDifference(
+          dump,
+          #"""
+          \Wrapped<String>.subscript(dynamicMember: <unknown>)
+          """#
+        )
+        return
+      }
+    #endif
     #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
       // Run twice to exercise cached lookup
       for _ in 1...2 {
@@ -1178,7 +1171,7 @@ final class DumpTests: XCTestCase {
     )
   }
 
-  func testRepeatition() {
+  func testRepetition() {
     class Human {
       let name = "John"
     }
@@ -1247,6 +1240,26 @@ final class DumpTests: XCTestCase {
       """
     )
   }
+
+  #if (swift(>=5.7) && !targetEnvironment(macCatalyst) && (os(iOS) || os(tvOS) || os(watchOS))) || (swift(>=5.7.1) && os(macOS))
+    func testDuration() {
+      guard #available(macOS 13, iOS 16, watchOS 9, tvOS 16, *) else { return }
+
+      XCTAssertNoDifference(
+        String(customDumping: Duration.seconds(5)),
+        """
+        5 seconds
+        """
+      )
+
+      XCTAssertNoDifference(
+        String(customDumping: Duration.seconds(5) + .milliseconds(123)),
+        """
+        5 seconds, 123 milliseconds
+        """
+      )
+    }
+  #endif
 
   #if canImport(CoreGraphics)
     func testCoreGraphics() {

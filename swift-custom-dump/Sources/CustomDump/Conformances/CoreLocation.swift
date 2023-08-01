@@ -77,7 +77,28 @@
     }
   }
 
-  #if compiler(>=5.3)
+  #if compiler(>=5.9)
+    @available(iOS 7, macOS 10.15, *)
+    @available(tvOS, unavailable)
+    @available(watchOS, unavailable)
+    @available(xrOS, unavailable)
+    extension CLProximity: CustomDumpStringConvertible {
+      public var customDumpDescription: String {
+        switch self {
+        case .far:
+          return "CLProximity.far"
+        case .immediate:
+          return "CLProximity.immediate"
+        case .near:
+          return "CLProximity.near"
+        case .unknown:
+          return "CLProximity.unknown"
+        @unknown default:
+          return "CLProximity.(@unknown default, rawValue: \(self.rawValue))"
+        }
+      }
+    }
+  #elseif compiler(>=5.3)
     @available(iOS 7, macOS 10.15, *)
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
@@ -99,19 +120,38 @@
     }
   #endif
 
-  @available(iOS 7, macOS 10, *)
-  @available(tvOS, unavailable)
-  @available(watchOS, unavailable)
-  extension CLRegionState: CustomDumpStringConvertible {
-    public var customDumpDescription: String {
-      switch self {
-      case .inside:
-        return "CLRegionState.inside"
-      case .outside:
-        return "CLRegionState.outside"
-      case .unknown:
-        return "CLRegionState.unknown"
+  #if compiler(>=5.9)
+    @available(iOS 7, macOS 10, *)
+    @available(tvOS, unavailable)
+    @available(watchOS, unavailable)
+    @available(xrOS, unavailable)
+    extension CLRegionState: CustomDumpStringConvertible {
+      public var customDumpDescription: String {
+        switch self {
+        case .inside:
+          return "CLRegionState.inside"
+        case .outside:
+          return "CLRegionState.outside"
+        case .unknown:
+          return "CLRegionState.unknown"
+        }
       }
     }
-  }
+  #else
+    @available(iOS 7, macOS 10, *)
+    @available(tvOS, unavailable)
+    @available(watchOS, unavailable)
+    extension CLRegionState: CustomDumpStringConvertible {
+      public var customDumpDescription: String {
+        switch self {
+        case .inside:
+          return "CLRegionState.inside"
+        case .outside:
+          return "CLRegionState.outside"
+        case .unknown:
+          return "CLRegionState.unknown"
+        }
+      }
+    }
+  #endif
 #endif
