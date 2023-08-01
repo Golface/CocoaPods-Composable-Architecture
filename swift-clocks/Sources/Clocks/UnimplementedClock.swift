@@ -1,4 +1,5 @@
 #if swift(>=5.7) && (canImport(RegexBuilder) || !os(macOS) && !targetEnvironment(macCatalyst))
+  import ConcurrencyExtras
   import Foundation
   import XCTestDynamicOverlay
 
@@ -19,7 +20,7 @@
   ///   let clock: any Clock<Duration>
   ///   var timerTask: Task<Void, Error>?
   ///
-  ///   init(clock: any Clock<Duration>) {
+  ///   init(clock: some Clock<Duration>) {
   ///     self.clock = clock
   ///   }
   ///   func incrementButtonTapped() {

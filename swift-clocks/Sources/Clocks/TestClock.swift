@@ -1,4 +1,5 @@
 #if swift(>=5.7) && (canImport(RegexBuilder) || !os(macOS) && !targetEnvironment(macCatalyst))
+  import ConcurrencyExtras
   import Foundation
   import XCTestDynamicOverlay
 
@@ -96,7 +97,7 @@
       )] = []
 
     public init(now: Instant = .init()) {
-      self.now = .init()
+      self.now = now
     }
 
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
