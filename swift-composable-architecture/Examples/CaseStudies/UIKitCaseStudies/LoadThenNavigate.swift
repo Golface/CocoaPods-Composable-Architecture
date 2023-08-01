@@ -3,7 +3,7 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct LazyNavigation: ReducerProtocol {
+struct LazyNavigation: Reducer {
   struct State: Equatable {
     var optionalCounter: Counter.State?
     var isActivityIndicatorHidden = true
@@ -19,7 +19,7 @@ struct LazyNavigation: ReducerProtocol {
   private enum CancelID { case load }
   @Dependency(\.continuousClock) var clock
 
-  var body: some ReducerProtocol<State, Action> {
+  var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
       case .onDisappear:
@@ -59,7 +59,7 @@ class LazyNavigationViewController: UIViewController {
 
   init(store: StoreOf<LazyNavigation>) {
     self.store = store
-    self.viewStore = ViewStore(store)
+    self.viewStore = ViewStore(store, observe: { $0 })
     super.init(nibName: nil, bundle: nil)
   }
 

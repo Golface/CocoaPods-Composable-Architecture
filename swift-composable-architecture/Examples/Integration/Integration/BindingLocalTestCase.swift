@@ -1,7 +1,7 @@
 import ComposableArchitecture
 import SwiftUI
 
-private struct BindingLocalTestCase: ReducerProtocol {
+private struct BindingLocalTestCase: Reducer {
   struct State: Equatable {
     @PresentationState var fullScreenCover: Child.State?
     @PresentationState var navigationDestination: Child.State?
@@ -20,7 +20,7 @@ private struct BindingLocalTestCase: ReducerProtocol {
     case sheet(PresentationAction<Child.Action>)
     case sheetButtonTapped
   }
-  var body: some ReducerProtocolOf<Self> {
+  var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .fullScreenCover:
@@ -65,7 +65,7 @@ private struct BindingLocalTestCase: ReducerProtocol {
   }
 }
 
-private struct Child: ReducerProtocol {
+private struct Child: Reducer {
   struct State: Equatable {
     @BindingState var sendOnDisappear = false
     @BindingState var text = ""
@@ -74,7 +74,7 @@ private struct Child: ReducerProtocol {
     case binding(BindingAction<State>)
     case onDisappear
   }
-  var body: some ReducerProtocolOf<Self> {
+  var body: some ReducerOf<Self> {
     BindingReducer()
   }
 }
@@ -88,17 +88,17 @@ struct BindingLocalTestCaseView: View {
     NavigationStackStore(self.store.scope(state: \.path, action: { .path($0) })) {
       VStack {
         Button("Full-screen-cover") {
-          ViewStore(self.store.stateless).send(.fullScreenCoverButtonTapped)
+          self.store.send(.fullScreenCoverButtonTapped)
         }
         Button("Navigation destination") {
-          ViewStore(self.store.stateless).send(.navigationDestinationButtonTapped)
+          self.store.send(.navigationDestinationButtonTapped)
         }
         NavigationLink("Path", state: Child.State())
         Button("Popover") {
-          ViewStore(self.store.stateless).send(.popoverButtonTapped)
+          self.store.send(.popoverButtonTapped)
         }
         Button("Sheet") {
-          ViewStore(self.store.stateless).send(.sheetButtonTapped)
+          self.store.send(.sheetButtonTapped)
         }
       }
       .fullScreenCover(
@@ -135,9 +135,9 @@ private struct ChildView: View {
         Button("Dismiss") {
           self.dismiss()
         }
-        TextField("Text", text: viewStore.binding(\.$text))
+        TextField("Text", text: viewStore.$text)
         Button(viewStore.sendOnDisappear ? "Don't send onDisappear" : "Send onDisappear") {
-          viewStore.binding(\.$sendOnDisappear).wrappedValue.toggle()
+          viewStore.$sendOnDisappear.wrappedValue.toggle()
         }
       }
       .onDisappear {

@@ -1,21 +1,21 @@
 import ComposableArchitecture
 
-struct AddContactFeature: ReducerProtocol {
+struct AddContactFeature: Reducer {
   struct State: Equatable {
     var contact: Contact
   }
-  enum Action {
+  enum Action: Equatable {
     case cancelButtonTapped
     case delegate(Delegate)
     case saveButtonTapped
     case setName(String)
-    enum Delegate {
+    enum Delegate: Equatable {
       case cancel
       case saveContact(Contact)
     }
   }
   @Dependency(\.dismiss) var dismiss
-  func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+  func reduce(into state: inout State, action: Action) -> Effect<Action> {
     switch action {
     case .cancelButtonTapped:
       return .run { _ in await self.dismiss() }

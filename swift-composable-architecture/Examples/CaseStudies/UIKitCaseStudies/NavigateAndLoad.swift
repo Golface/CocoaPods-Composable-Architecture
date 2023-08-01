@@ -3,7 +3,7 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct EagerNavigation: ReducerProtocol {
+struct EagerNavigation: Reducer {
   struct State: Equatable {
     var isNavigationActive = false
     var optionalCounter: Counter.State?
@@ -18,7 +18,7 @@ struct EagerNavigation: ReducerProtocol {
   private enum CancelID { case load }
   @Dependency(\.continuousClock) var clock
 
-  var body: some ReducerProtocol<State, Action> {
+  var body: some Reducer<State, Action> {
     Reduce { state, action in
       switch action {
       case .setNavigation(isActive: true):
@@ -55,7 +55,7 @@ class EagerNavigationViewController: UIViewController {
 
   init(store: StoreOf<EagerNavigation>) {
     self.store = store
-    self.viewStore = ViewStore(store)
+    self.viewStore = ViewStore(store, observe: { $0 })
     super.init(nibName: nil, bundle: nil)
   }
 

@@ -1,8 +1,8 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct SwitchStoreTestCase: ReducerProtocol {
-  struct Screen: ReducerProtocol {
+struct SwitchStoreTestCase: Reducer {
+  struct Screen: Reducer {
     struct State: Equatable {
       var count = 0
     }
@@ -10,7 +10,7 @@ struct SwitchStoreTestCase: ReducerProtocol {
       case decrementButtonTapped
       case incrementButtonTapped
     }
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    func reduce(into state: inout State, action: Action) -> Effect<Action> {
       switch action {
       case .decrementButtonTapped:
         state.count -= 1
@@ -32,7 +32,7 @@ struct SwitchStoreTestCase: ReducerProtocol {
     case swap
   }
 
-  var body: some ReducerProtocolOf<Self> {
+  var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch (state, action) {
       case (_, .screenA), (_, .screenB):
@@ -60,9 +60,7 @@ struct SwitchStoreTestCaseView: View {
   }
 
   var body: some View {
-    WithViewStore(store.stateless) { viewStore in
-      Button("Swap") { viewStore.send(.swap) }
-    }
+    Button("Swap") { self.store.send(.swap) }
     SwitchStore(self.store) {
       switch $0 {
       case .screenA:

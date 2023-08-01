@@ -3,7 +3,7 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct CounterList: ReducerProtocol {
+struct CounterList: Reducer {
   struct State: Equatable {
     var counters: IdentifiedArrayOf<Counter.State> = []
   }
@@ -12,7 +12,7 @@ struct CounterList: ReducerProtocol {
     case counter(id: Counter.State.ID, action: Counter.Action)
   }
 
-  var body: some ReducerProtocol<State, Action> {
+  var body: some Reducer<State, Action> {
     EmptyReducer()
       .forEach(\.counters, action: /Action.counter) {
         Counter()
@@ -29,7 +29,7 @@ final class CountersTableViewController: UITableViewController {
 
   init(store: StoreOf<CounterList>) {
     self.store = store
-    self.viewStore = ViewStore(store)
+    self.viewStore = ViewStore(store, observe: { $0 })
     super.init(nibName: nil, bundle: nil)
   }
 

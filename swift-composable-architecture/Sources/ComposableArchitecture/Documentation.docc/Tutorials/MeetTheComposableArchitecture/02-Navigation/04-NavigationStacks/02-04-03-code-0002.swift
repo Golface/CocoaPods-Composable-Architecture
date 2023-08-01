@@ -1,19 +1,23 @@
 import ComposableArchitecture
 
-struct ContactDetailFeature: ReducerProtocol {
+struct ContactDetailFeature: Reducer {
   struct State: Equatable {
     @PresentationState var alert: AlertState<Action.Alert>?
     let contact: Contact
   }
-  enum Action {
+  enum Action: Equatable {
     case alert(PresentationAction<Alert>)
+    case delegate(Delegate)
     case deleteButtonTapped
     enum Alert {
       case confirmDeletion
     }
+    enum Delegate {
+      case confirmDeletion
+    }
   }
   @Dependency(\.dismiss) var dismiss
-  var body: some ReducerProtocolOf<Self> {
+  var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .alert(.presented(.confirmDeletion)):
