@@ -16,28 +16,21 @@ let package = Package(
       targets: ["SwiftUINavigation"]
     ),
     .library(
-      name: "_SwiftUINavigationState",
-      targets: ["_SwiftUINavigationState"]
+      name: "SwiftUINavigationCore",
+      targets: ["SwiftUINavigationCore"]
     ),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "0.11.0"),
-    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "0.6.0"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.8.0"),
+    .package(url: "https://github.com/pointfreeco/swift-case-paths", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-custom-dump", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.0.0"),
   ],
   targets: [
     .target(
-      name: "_SwiftUINavigationState",
-      dependencies: [
-        .product(name: "CustomDump", package: "swift-custom-dump"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
-      ]
-    ),
-    .target(
       name: "SwiftUINavigation",
       dependencies: [
-        "_SwiftUINavigationState",
+        "SwiftUINavigationCore",
         .product(name: "CasePaths", package: "swift-case-paths"),
       ]
     ),
@@ -45,6 +38,13 @@ let package = Package(
       name: "SwiftUINavigationTests",
       dependencies: [
         "SwiftUINavigation"
+      ]
+    ),
+    .target(
+      name: "SwiftUINavigationCore",
+      dependencies: [
+        .product(name: "CustomDump", package: "swift-custom-dump"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
   ]
