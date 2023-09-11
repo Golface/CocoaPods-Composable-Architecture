@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "ComposableArchitecture"
-  spec.version = "1.0.0"
+  spec.version = "1.2.0"
   spec.summary = "A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind."
   spec.description = <<-DESC
   The Composable Architecture (TCA, for short) is a library for building applications in a consistent and understandable way,
