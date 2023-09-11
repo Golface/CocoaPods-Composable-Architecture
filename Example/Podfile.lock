@@ -13,7 +13,7 @@ PODS:
   - CombineSchedulers (1.0.0):
     - ConcurrencyExtras (<= 1.0)
     - XCTestDynamicOverlay (<= 1.0)
-  - ComposableArchitecture (1.0.0):
+  - ComposableArchitecture (1.2.0):
     - CasePaths (<= 1.0)
     - Clocks (<= 1.0)
     - CombineSchedulers (<= 1.0)
@@ -90,7 +90,7 @@ SPEC CHECKSUMS:
   Clocks: 44c9d782820d1cbff1074e4e6fe0163e9e3b994d
   Collections: e759858055a6cf579e5789d18da92613262fcd91
   CombineSchedulers: 82106c14e1b69a333914ee6237e6ceac5bc0df4a
-  ComposableArchitecture: 49834be7496a95de92be3e87094af21a9be51d08
+  ComposableArchitecture: 0886c185166fb182869733c4dd7f7835da003342
   ConcurrencyExtras: 49a26f61f65093b14d23b5c3af6d48d6f5e4b3f7
   CustomDump: 3ec791e6d2b02776fe1c59cb2aa23a86aeac88e5
   Dependencies: bdf3316bda6b4559562208a9d659941317aa05d6
